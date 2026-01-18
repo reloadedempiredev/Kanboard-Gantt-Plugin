@@ -1,0 +1,1327 @@
+/*
+ * Kanboard DHtmlX Gantt Plugin - Custom Styles
+ * 
+ * Additional CSS for Kanboard integration
+ */
+
+/* Hide Type field by default to prevent flash - will be shown only for new tasks */
+.gantt_cal_light .gantt_cal_lsection:has(+ .gantt_cal_ltext select[title="type"]),
+.gantt_cal_light .gantt_cal_ltext:has(select[title="type"]) {
+    display: none !important;
+}
+
+/* Show Type field for new tasks (class added dynamically) */
+.gantt_cal_light.gantt-new-task .gantt_cal_lsection:has(+ .gantt_cal_ltext select[title="type"]),
+.gantt_cal_light.gantt-new-task .gantt_cal_ltext:has(select[title="type"]) {
+    display: block !important;
+}
+
+/* Hide Sprint Tasks section by default to avoid flash */
+.gantt_cal_light .gantt_cal_lsection:has(+ .sprint-tasks-block),
+.gantt_cal_light .sprint-tasks-block {
+    display: none !important;
+}
+
+/* Show Sprint Tasks section only when the lightbox is in sprint mode */
+.gantt_cal_light.gantt-show-sprint-tasks .gantt_cal_lsection:has(+ .sprint-tasks-block),
+.gantt_cal_light.gantt-show-sprint-tasks .sprint-tasks-block {
+    display: block !important;
+}
+
+/* Hide duration input for milestones */
+.gantt_cal_light.gantt-milestone-mode .gantt_time input[type="number"],
+.gantt_cal_light.gantt-milestone-mode .gantt_time .gantt_duration input,
+.gantt_cal_light.gantt-milestone-mode .gantt_time .gantt_duration_value,
+.gantt_cal_light.gantt-milestone-mode .gantt_duration_end_date {
+    display: none !important;
+}
+
+/* Normalize control widths/heights inside lightbox */
+.gantt_cal_light .gantt_cal_ltext select,
+.gantt_cal_light .gantt_cal_ltext textarea,
+.gantt_cal_light .gantt_cal_ltext input[type="text"],
+.gantt_cal_light .gantt_cal_ltextarea textarea {
+    width: 100% !important;
+    min-height: 34px;
+    box-sizing: border-box;
+}
+
+.gantt_cal_light .gantt_cal_ltextarea {
+    width: 100% !important;
+}
+
+.gantt_cal_light .gantt_cal_ltext textarea,
+.gantt_cal_light .gantt_cal_ltextarea textarea,
+.gantt_cal_light textarea[id^="input_"] {
+    height: 34px !important;
+    padding: 6px !important;
+    resize: vertical;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.gantt_cal_light .gantt_cal_ltext,
+.gantt_cal_light .gantt_cal_ltextarea {
+    width: 100% !important;
+    padding: 0 !important;
+    float: none !important;
+    clear: both !important;
+    margin-bottom: 12px !important;
+}
+
+.gantt_cal_light .gantt_cal_lsection {
+    width: 100% !important;
+    float: none !important;
+    clear: both !important;
+}
+
+.gantt_cal_light .sprint-tasks-block {
+    margin-top: 0;
+}
+
+/* Add padding between Description and Tasks section */
+.gantt_cal_light .gantt_cal_lsection:has(+ .sprint-tasks-block) {
+    margin-top: 12px !important;
+}
+
+.gantt_cal_light .sprint-tasks-block {
+    margin-top: 12px !important;
+}
+
+.gantt_cal_light .gantt_cal_ltext:has(.gantt-sprint-create-link) {
+    margin-bottom: 26px !important;
+}
+
+.gantt-sprint-create-link {
+    display: block;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.gantt-sprint-create-link a {
+    text-decoration: underline;
+    color: #1f64c8;
+    cursor: pointer;
+}
+
+.gantt-sprint-create-link a:hover {
+    text-decoration: none;
+}
+
+body.gantt-dark-mode .gantt-sprint-create-link a {
+    color: #8ab4ff !important;
+}
+
+/* Hide duration input for milestones via CSS class */
+.gantt_cal_light.gantt-milestone-type .gantt_time input[type="number"],
+.gantt_cal_light.gantt-milestone-type .gantt_duration,
+.gantt_cal_light.gantt-milestone-type .gantt_duration_value,
+.gantt_cal_light.gantt-milestone-type .gantt_duration_end_date {
+    display: none !important;
+}
+
+.gantt_cal_light.gantt-show-sprint-tasks .gantt_cal_lsection:has(+ .sprint-tasks-block) {
+    margin-top: 16px !important;
+}
+
+.gantt_cal_light.gantt-show-sprint-tasks .sprint-tasks-block {
+    margin-top: 8px !important;
+}
+
+/* ✅ RESPONSIVE LAYOUT: Full viewport height management */
+#main {
+    display: flex !important;
+    flex-direction: column !important;
+    height: calc(100vh - 50px) !important; /* Account for Kanboard top nav */
+    min-height: 600px !important;
+    overflow: hidden !important;
+}
+
+/* DHtmlX Gantt Container Styles */
+.dhtmlx-gantt-container {
+    border: 1px solid #ddd;
+    background: #fff;
+    margin: 20px 0;
+    flex: 1 !important; /* Take remaining space */
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative;
+    min-height: 0 !important; /* Critical for flex children */
+    overflow: hidden !important;
+    overscroll-behavior-x: contain !important; /* Prevent browser navigation on horizontal scroll */
+}
+
+/* ✅ RESPONSIVE GANTT CHART: Make chart adapt to viewport */
+#dhtmlx-gantt-chart {
+    flex: 1 !important; /* Take all available space */
+    width: 100% !important;
+    min-height: 0 !important; /* Critical for proper flex sizing */
+    position: relative !important;
+    overflow: hidden !important; /* DHTMLX handles internal scrolling */
+    overscroll-behavior-x: contain !important; /* Prevent browser navigation on horizontal scroll */
+    overscroll-behavior-y: contain !important; /* Prevent pull-to-refresh on vertical scroll */
+}
+
+/* Ensure Gantt chart internal container uses full height */
+#dhtmlx-gantt-chart .gantt_container {
+    height: 100% !important;
+    width: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    overscroll-behavior: contain !important; /* Prevent browser navigation gestures */
+}
+
+/* Prevent browser navigation on timeline scroll */
+.gantt_task,
+.gantt_task_bg,
+.gantt_data_area,
+.gantt_layout_cell {
+    overscroll-behavior-x: contain !important;
+}
+
+/* Ensure toolbar and info panel don't grow */
+.dhtmlx-gantt-toolbar,
+.dhtmlx-gantt-info {
+    flex-shrink: 0 !important;
+}
+
+.dhtmlx-gantt-toolbar {
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dhtmlx-gantt-toolbar .group-by-block,
+.dhtmlx-gantt-toolbar .group-by-block span,
+.dhtmlx-gantt-toolbar .group-by-block select,
+.dhtmlx-gantt-toolbar .group-by-block i {
+    font-size: 13px !important;
+    color: #2c3e50 !important;
+}
+
+.dhtmlx-toolbar-separator {
+    width: 1px;
+    height: 20px;
+    background: #ddd;
+    margin: 0 5px;
+}
+
+.dhtmlx-gantt-info {
+    background: #f8f9fa;
+    border-top: 1px solid #ddd;
+    padding: 15px;
+    display: flex;
+    gap: 30px;
+}
+
+.dhtmlx-info-section h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.dhtmlx-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.dhtmlx-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dhtmlx-stat-label {
+    font-size: 12px;
+    color: #666;
+}
+
+.dhtmlx-stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.dhtmlx-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dhtmlx-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dhtmlx-legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+/* DHtmlX Gantt Task Priority Styles */
+.dhtmlx-priority-high .gantt_task_line {
+    background: #e74c3c !important;
+    border-color: #c0392b !important;
+}
+
+.dhtmlx-priority-medium .gantt_task_line {
+    background: #f39c12 !important;
+    border-color: #e67e22 !important;
+}
+
+.dhtmlx-priority-low .gantt_task_line {
+    background: #3498db !important;
+    border-color: #2980b9 !important;
+}
+
+.dhtmlx-readonly .gantt_task_line {
+    opacity: 0.6;
+}
+
+.dhtmlx-highlighted .gantt_task_line {
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.6);
+}
+
+/* Milestone Styles - Green Color */
+.gantt_task_line.gantt_milestone,
+.gantt_task_line.milestone-block {
+    background-color: #27ae60 !important;
+    border-color: #229954 !important;
+}
+
+.gantt_task_line.gantt_milestone .gantt_task_content,
+.gantt_task_line.milestone-block .gantt_task_content {
+    color: #000 !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Keep black text during drag operations */
+.gantt_task_line.gantt_milestone.gantt_drag_move .gantt_task_content,
+.gantt_task_line.milestone-block.gantt_drag_move .gantt_task_content,
+.gantt_task_line.gantt_milestone.gantt_drag_resize .gantt_task_content,
+.gantt_task_line.milestone-block.gantt_drag_resize .gantt_task_content,
+.gantt_task_line.gantt_milestone.gantt_drag_progress .gantt_task_content,
+.gantt_task_line.milestone-block.gantt_drag_progress .gantt_task_content {
+    color: #000 !important;
+}
+
+/* Hide the diamond/marker icon for milestones */
+.gantt_task_line.gantt_milestone .gantt_task_marker,
+.gantt_task_line.milestone-block .gantt_task_marker {
+    display: none !important;
+}
+
+/* Hide milestone diamond shape completely */
+.gantt_task_line.gantt_milestone::before,
+.gantt_task_line.gantt_milestone::after {
+    display: none !important;
+}
+
+/* Sprint Styles - Purple */
+.gantt_task_line.sprint-block {
+    background-color: #9b59b6 !important;
+    border-color: #8e44ad !important;
+    color: #fff !important;
+}
+
+.gantt_task_line.sprint-block .gantt_task_content,
+.gantt_task_line.sprint-block .gantt_task_rightside_text,
+.gantt_task_line.sprint-block .gantt_task_progress_text {
+    color: #ffffff !important;
+    text-shadow: none !important;
+}
+
+.gantt_task_line.sprint-block .gantt_task_progress {
+    background: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Button Styles */
+
+.btn-dhtmlx-view.active {
+    background-color: #667eea !important;
+    color: white !important;
+}
+
+/* Progress Text */
+.dhtmlx-progress-text {
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+/* Loading State */
+.dhtmlx-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+}
+
+.dhtmlx-loading-text {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Error State */
+.dhtmlx-error {
+    padding: 40px;
+    text-align: center;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    margin: 20px 0;
+}
+
+.dhtmlx-error h3 {
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+/* Task bar assignee styling */
+.gantt_task_content {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2c3e50 !important; /* Dark blue-gray for good readability */
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8) !important; /* Light shadow for contrast */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Right side text (assignee) styling */
+.gantt_task_line .gantt_task_rightside_text {
+    font-size: 12px;
+    color: #34495e !important; /* Darker color for better visibility */
+    font-weight: 900 !important;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.9) !important; /* Semi-transparent white background */
+    border-radius: 12px;
+    border: 1px solid rgba(52,73,94,0.2);
+    text-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Right side content element used by DHTMLX */
+.gantt_side_content.gantt_right {
+    font-size: 12px;
+    font-weight: 900 !important;
+    color: #34495e !important;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: 4px !important;
+    padding-left: 4px !important;
+}
+/* Progress bar styling - make more transparent */
+.gantt_task_progress_drag {
+    background: rgba(0, 0, 0, 0.15) !important; /* Very transparent dark overlay */
+    opacity: 0.4 !important; /* Additional transparency */
+}
+
+/* Progress text styling */
+.gantt_task_progress_text {
+    color: #2c3e50 !important;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8) !important;
+    opacity: 0.7 !important; /* Make progress text less prominent */
+}
+
+/* Hover effects for better interaction */
+.gantt_task_line:hover .gantt_task_content {
+    color: #1a252f !important;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+}
+
+.gantt_task_line:hover .gantt_task_rightside_text {
+    background: rgba(255,255,255,1) !important;
+    color: #2c3e50 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+
+/* Ensure text rendering quality */
+.gantt_task_content {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Center regular task labels vertically inside the bar */
+.gantt_task_line:not(.gantt_milestone) .gantt_task_content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 6px;
+    min-width: 0;
+    text-align: center;
+}
+
+/* Task selection highlighting */
+.gantt_selected .gantt_task_line .gantt_task_content {
+    color: #1a252f !important;
+    font-weight: 700 !important;
+}
+
+.gantt_selected .gantt_task_line .gantt_task_rightside_text {
+    background: rgba(52,152,219,0.2) !important;
+    color: #2c3e50 !important;
+    border-color: #3498db !important;
+}
+
+/* Force dark text on all priority levels */
+.dhtmlx-priority-high .gantt_task_content,
+.dhtmlx-priority-medium .gantt_task_content,
+.dhtmlx-priority-low .gantt_task_content,
+.gantt_task_line .gantt_task_content {
+    color: #2c3e50 !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8) !important;
+}
+
+.dhtmlx-priority-high .gantt_task_rightside_text,
+.dhtmlx-priority-medium .gantt_task_rightside_text,
+.dhtmlx-priority-low .gantt_task_rightside_text,
+.gantt_task_line .gantt_task_rightside_text {
+    color: #34495e !important;
+    background: rgba(255,255,255,0.9) !important;
+}
+
+.dhtmlx-priority-high .gantt_task_progress_text,
+.dhtmlx-priority-medium .gantt_task_progress_text,
+.dhtmlx-priority-low .gantt_task_progress_text,
+.gantt_task_progress_text {
+    color: #2c3e50 !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8) !important;
+}
+
+/* Workload-based border colors - ONLY border, keep fill color from group */
+/* These borders are shown by default and hidden when .hide-busyness-borders class is present */
+.gantt_task_line.workload-available {
+    border: 3px solid #27ae60 !important; /* Green border for available */
+    background: var(--dhx-gantt-task-background) !important; /* Preserve group color */
+}
+
+.gantt_task_line.workload-busy {
+    border: 3px solid #f39c12 !important; /* Orange border for busy */
+    background: var(--dhx-gantt-task-background) !important; /* Preserve group color */
+}
+
+.gantt_task_line.workload-overloaded {
+    border: 3px solid #e74c3c !important; /* Red border for overloaded */
+    background: var(--dhx-gantt-task-background) !important; /* Preserve group color */
+}
+
+/* Ensure borders show on hover and during drag, preserve background */
+.gantt_task_line.workload-available:hover,
+.gantt_task_line.workload-available.gantt_drag_move,
+.gantt_task_line.workload-available.gantt_selected {
+    border-color: #27ae60 !important;
+    background: var(--dhx-gantt-task-background) !important;
+}
+
+.gantt_task_line.workload-busy:hover,
+.gantt_task_line.workload-busy.gantt_drag_move,
+.gantt_task_line.workload-busy.gantt_selected {
+    border-color: #f39c12 !important;
+    background: var(--dhx-gantt-task-background) !important;
+}
+
+.gantt_task_line.workload-overloaded:hover,
+.gantt_task_line.workload-overloaded.gantt_drag_move,
+.gantt_task_line.workload-overloaded.gantt_selected {
+    border-color: #e74c3c !important;
+    background: var(--dhx-gantt-task-background) !important;
+}
+
+/* Hide workload borders when toggle is off - show only subtle default border */
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-available,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-busy,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-overloaded {
+    border: 1px solid #888 !important; /* Default subtle border */
+}
+
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-available:hover,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-available.gantt_drag_move,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-available.gantt_selected,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-busy:hover,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-busy.gantt_drag_move,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-busy.gantt_selected,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-overloaded:hover,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-overloaded.gantt_drag_move,
+#dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-overloaded.gantt_selected {
+    border: 1px solid #888 !important; /* Default subtle border on hover */
+}
+
+/* Dark mode - SAME busyness border colors as light mode - HIGH SPECIFICITY */
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-available,
+body.gantt-dark-mode .gantt_container .gantt_task_line.workload-available,
+body.gantt-dark-mode .gantt_data_area .gantt_task_line.workload-available {
+    border: 3px solid #27ae60 !important; /* Green border - same as light mode */
+    border-color: #27ae60 !important;
+}
+
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-busy,
+body.gantt-dark-mode .gantt_container .gantt_task_line.workload-busy,
+body.gantt-dark-mode .gantt_data_area .gantt_task_line.workload-busy {
+    border: 3px solid #f39c12 !important; /* Orange border - same as light mode */
+    border-color: #f39c12 !important;
+}
+
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-overloaded,
+body.gantt-dark-mode .gantt_container .gantt_task_line.workload-overloaded,
+body.gantt-dark-mode .gantt_data_area .gantt_task_line.workload-overloaded {
+    border: 3px solid #e74c3c !important; /* Red border - same as light mode */
+    border-color: #e74c3c !important;
+}
+
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-available:hover,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-available.gantt_drag_move,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-available.gantt_selected {
+    border-color: #27ae60 !important;
+}
+
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-busy:hover,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-busy.gantt_drag_move,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-busy.gantt_selected {
+    border-color: #f39c12 !important;
+}
+
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-overloaded:hover,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-overloaded.gantt_drag_move,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_task_line.workload-overloaded.gantt_selected {
+    border-color: #e74c3c !important;
+}
+
+/* Dark mode - hidden busyness borders */
+body.gantt-dark-mode #dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-available,
+body.gantt-dark-mode #dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-busy,
+body.gantt-dark-mode #dhtmlx-gantt-chart.hide-busyness-borders .gantt_task_line.workload-overloaded {
+    border: 1px solid #555 !important; /* Subtle grey border when hidden in dark mode */
+    border-color: #555 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dhtmlx-gantt-toolbar {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .dhtmlx-gantt-info {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .dhtmlx-stats {
+        justify-content: space-around;
+    }
+    
+    /* Hide assignee background on small screens to save space */
+    .gantt_task_line .gantt_task_rightside_text {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #34495e !important;
+        font-weight: 900 !important;
+    }
+    .gantt_side_content.gantt_right {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #34495e !important;
+        font-weight: 900 !important;
+        font-size: 12px;
+    }
+}
+
+/* ========================================
+   DARK MODE STYLES
+   ======================================== */
+
+body.gantt-dark-mode,
+body.gantt-dark-mode #main,
+body.gantt-dark-mode .page,
+body.gantt-dark-mode .content {
+    background-color: #121212 !important;
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode #dhtmlx-gantt-chart,
+body.gantt-dark-mode .gantt_container,
+body.gantt-dark-mode .gantt_task_bg,
+body.gantt-dark-mode .gantt_data_area,
+body.gantt-dark-mode .gantt_task_area {
+    background-color: #161616 !important;
+}
+
+body.gantt-dark-mode .gantt_grid,
+body.gantt-dark-mode .gantt_grid_scale,
+body.gantt-dark-mode .gantt_grid_data {
+    background-color: #1c1c1c !important;
+    color: #e0e0e0 !important;
+}
+
+body.gantt-dark-mode .gantt_grid_head_cell,
+body.gantt-dark-mode .gantt_scale_cell {
+    background-color: #202020 !important;
+    color: #e0e0e0 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_row,
+body.gantt-dark-mode .gantt_row.odd,
+body.gantt-dark-mode .gantt_cell {
+    border-color: #3a3a3a !important;
+    background-color: #191919 !important;
+    color: #d5d5d5 !important;
+}
+
+body.gantt-dark-mode .gantt_grid_data .gantt_row,
+body.gantt-dark-mode .gantt_grid_data .gantt_row.odd,
+body.gantt-dark-mode .gantt_data_area .gantt_task_row,
+body.gantt-dark-mode .gantt_data_area .gantt_task_row.odd {
+    background-color: #1f1f1f !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_row:hover {
+    background-color: #272727 !important;
+}
+
+body.gantt-dark-mode .gantt_task_scale {
+    background-color: #2d2d30 !important;
+    border-color: #3e3e42 !important;
+}
+
+body.gantt-dark-mode .gantt_scale_line {
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_task_scale .gantt_scale_cell,
+body.gantt-dark-mode .gantt_scale_line,
+body.gantt-dark-mode .gantt_task_vline,
+body.gantt-dark-mode .gantt_task .gantt_task_line,
+body.gantt-dark-mode .gantt_grid_data .gantt_cell,
+body.gantt-dark-mode .gantt_task_row .gantt_cell,
+body.gantt-dark-mode .gantt_task_row .gantt_task_cell,
+body.gantt-dark-mode .gantt_scale_cell,
+body.gantt-dark-mode .gantt_grid_head_cell,
+body.gantt-dark-mode .gantt_cell,
+body.gantt-dark-mode .gantt_task_cell,
+body.gantt-dark-mode .gantt_grid_data,
+body.gantt-dark-mode .gantt_data_area,
+body.gantt-dark-mode .gantt_task_bg,
+body.gantt-dark-mode .gantt_links_area,
+body.gantt-dark-mode .gantt_bars_area {
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_task_bg,
+body.gantt-dark-mode .gantt_task_bg .gantt_task_row,
+body.gantt-dark-mode .gantt_data_area .gantt_task_bg,
+body.gantt-dark-mode .gantt_timeline .gantt_cell,
+body.gantt-dark-mode .gantt_timeline .gantt_task_bg,
+body.gantt-dark-mode .gantt_task_row,
+body.gantt-dark-mode .gantt_task_row.odd {
+    border-color: #3a3a3a !important;
+}
+
+/* Force all borders inside gantt to be grey - EXCEPT workload task borders */
+body.gantt-dark-mode #dhtmlx-gantt-chart *:not(.workload-available):not(.workload-busy):not(.workload-overloaded),
+body.gantt-dark-mode .gantt_container *:not(.workload-available):not(.workload-busy):not(.workload-overloaded),
+body.gantt-dark-mode .gantt_grid *,
+body.gantt-dark-mode .gantt_data_area *:not(.workload-available):not(.workload-busy):not(.workload-overloaded),
+body.gantt-dark-mode .gantt_task_bg *:not(.workload-available):not(.workload-busy):not(.workload-overloaded) {
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_task_content {
+    color: #1a1a1a !important;
+    text-shadow: none !important;
+}
+
+body.gantt-dark-mode .gantt_task_line:not(.gantt_milestone):not(.sprint-block) .gantt_task_content {
+    color: #1a1a1a !important;
+}
+
+body.gantt-dark-mode .gantt_task_line .gantt_task_rightside_text {
+    background: rgba(32,32,32,0.95) !important;
+    color: #e5e5e5 !important;
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+body.gantt-dark-mode .gantt_side_content.gantt_right {
+    color: #dcdcdc !important;
+}
+
+body.gantt-dark-mode .gantt_task_line:hover .gantt_task_rightside_text {
+    background: rgba(45,45,45,1) !important;
+    color: #ffffff !important;
+}
+
+body.gantt-dark-mode .gantt_line_wrapper div {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+    background-image: none !important;
+}
+
+body.gantt-dark-mode .gantt_link_line {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+    background-image: none !important;
+}
+
+body.gantt-dark-mode .gantt_link_arrow {
+    background-color: transparent !important;
+}
+
+/* Note: Arrow head styling (border-based triangles) is in gantt-csp-fix.css */
+
+body.gantt-dark-mode .gantt_link_point,
+body.gantt-dark-mode .gantt_link_control .gantt_link_point,
+body.gantt-dark-mode .gantt_link_control div,
+body.gantt-dark-mode .gantt_line_wrapper .gantt_line_point {
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+body.gantt-dark-mode .gantt_line_wrapper .gantt_line_point {
+    box-shadow: 0 0 0 1px #ffffff !important;
+}
+
+body.gantt-dark-mode .gantt_line_wrapper .gantt_line_point:before,
+body.gantt-dark-mode .gantt_line_wrapper .gantt_line_point:after {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+}
+
+body.gantt-dark-mode .gantt_task_progress {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.gantt-dark-mode .gantt_task_progress_text {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8) !important;
+}
+
+/* Dark mode toolbar */
+body.gantt-dark-mode .dhtmlx-gantt-toolbar {
+    background: #1e1e1f !important;
+    border-color: #2a2a2a !important;
+}
+
+body.gantt-dark-mode .dhtmlx-gantt-info {
+    background: #1f1f1f !important;
+    border: 1px solid #3a3a3a !important;
+    border-color: #3a3a3a !important;
+    color: #dcdcdc !important;
+}
+
+body.gantt-dark-mode .dhtmlx-gantt-container {
+    border: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode .dhtmlx-info-section,
+body.gantt-dark-mode .dhtmlx-legend,
+body.gantt-dark-mode .dhtmlx-legend-column,
+body.gantt-dark-mode .dhtmlx-legend-two-column {
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .group-by-block,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .group-by-block span,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .group-by-block select,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .group-by-block i,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar span[style*="color"],
+body.gantt-dark-mode .dhtmlx-gantt-toolbar i.fa-users {
+    color: #f0f0f0 !important;
+}
+
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .group-by-block select {
+    background: #252525 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode .page-header,
+body.gantt-dark-mode .page-footer,
+body.gantt-dark-mode .sidebar {
+    background: #161616 !important;
+    color: #efefef !important;
+}
+
+body.gantt-dark-mode header,
+body.gantt-dark-mode .header,
+body.gantt-dark-mode .page-header a,
+body.gantt-dark-mode .page-header .menu a,
+body.gantt-dark-mode .page-header .title,
+body.gantt-dark-mode .project-header,
+body.gantt-dark-mode .project-header a,
+body.gantt-dark-mode .project-header .menu a {
+    background: #151515 !important;
+    color: #f5f5f5 !important;
+    border-color: #2c2c2c !important;
+}
+
+body.gantt-dark-mode .dropdown-menu,
+body.gantt-dark-mode .dropdown-menu li,
+body.gantt-dark-mode .dropdown-submenu,
+body.gantt-dark-mode .dropdown-menu a {
+    background: #1f1f1f !important;
+    color: #f5f5f5 !important;
+    border-color: #2f2f2f !important;
+}
+
+body.gantt-dark-mode .dropdown-menu a:hover,
+body.gantt-dark-mode .dropdown-menu li:hover > a {
+    background: #292929 !important;
+    color: #ffffff !important;
+}
+
+body.gantt-dark-mode .form-search,
+body.gantt-dark-mode .header .search,
+body.gantt-dark-mode .search,
+body.gantt-dark-mode .search input,
+body.gantt-dark-mode .search .input-addon,
+body.gantt-dark-mode .search .input-addon-field,
+body.gantt-dark-mode .search .input-addon-item {
+    background: #1d1d1d !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #2f2f2f !important;
+}
+
+body.gantt-dark-mode .search .input-addon-item a,
+body.gantt-dark-mode .search .input-addon-item i,
+body.gantt-dark-mode .search .dropdown-menu-link-icon,
+body.gantt-dark-mode .search .dropdown-menu-link-icon i,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar i.fa-cog,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .fa-caret-down,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .dropdown-menu-link-icon,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .dropdown-menu-link-icon i {
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode .legend,
+body.gantt-dark-mode .panel,
+body.gantt-dark-mode .panel-heading,
+body.gantt-dark-mode .panel-body {
+    background: #181818 !important;
+    color: #efefef !important;
+    border-color: #2c2c2c !important;
+}
+
+body.gantt-dark-mode .select-dropdown-input-container,
+body.gantt-dark-mode .select-dropdown-input-container *,
+body.gantt-dark-mode .project-header .select-dropdown-input-container,
+body.gantt-dark-mode .project-header .select-dropdown-input-container *,
+body.gantt-dark-mode .select-dropdown-input-container input,
+body.gantt-dark-mode .project-header .select-dropdown-input,
+body.gantt-dark-mode .select-dropdown-input {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border-color: #2f2f2f !important;
+}
+
+body.gantt-dark-mode .project-header ul.views,
+body.gantt-dark-mode .project-header ul.views li,
+body.gantt-dark-mode .project-header ul.views li a {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #2f2f2f !important;
+}
+
+body.gantt-dark-mode .project-header ul.views li a i,
+body.gantt-dark-mode .project-header .views li a i {
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode .project-header ul.views li.active a {
+    background: #080808 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .page-header .title a,
+body.gantt-dark-mode .page-header .title a i {
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode .select-dropdown-input::placeholder {
+    color: #aaaaaa !important;
+}
+
+body.gantt-dark-mode .select-dropdown-chevron,
+body.gantt-dark-mode .select-dropdown-input-container .select-loading-icon i {
+    color: #dcdcdc !important;
+}
+
+body.gantt-dark-mode input:not([type="checkbox"]),
+body.gantt-dark-mode select,
+body.gantt-dark-mode textarea {
+    background-color: #202020 !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #3a3a3a !important;
+    box-shadow: none !important;
+}
+
+body.gantt-dark-mode .table,
+body.gantt-dark-mode .table th,
+body.gantt-dark-mode .table td,
+body.gantt-dark-mode .panel,
+body.gantt-dark-mode .listing,
+body.gantt-dark-mode .listing li {
+    background: #151515 !important;
+    color: #efefef !important;
+    border-color: #2b2b2b !important;
+}
+
+body.gantt-dark-mode .content > * ,
+body.gantt-dark-mode .page > * ,
+body.gantt-dark-mode .panel,
+body.gantt-dark-mode .config-box,
+body.gantt-dark-mode .kanboard-section,
+body.gantt-dark-mode .kanboard-table,
+body.gantt-dark-mode .listing,
+body.gantt-dark-mode .listing li,
+body.gantt-dark-mode .page-header,
+body.gantt-dark-mode .project-header,
+body.gantt-dark-mode .sidebar,
+body.gantt-dark-mode .page-footer {
+    border-color: #2f2f2f !important;
+}
+
+body.gantt-dark-mode .btn {
+    background: #2a2a2a !important;
+    color: #f0f0f0 !important;
+    border-color: #3b3b3b !important;
+}
+
+body.gantt-dark-mode .btn:hover {
+    background: #333333 !important;
+    color: #ffffff !important;
+}
+
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .btn {
+    background: #2a2a2a !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .btn:hover {
+    background: #353535 !important;
+}
+
+body.gantt-dark-mode .dhtmlx-legend-item,
+body.gantt-dark-mode .dhtmlx-legend-item span,
+body.gantt-dark-mode .dhtmlx-legend-column strong,
+body.gantt-dark-mode .dhtmlx-stat-label,
+body.gantt-dark-mode .dhtmlx-info-section h3,
+body.gantt-dark-mode .dhtmlx-gantt-toolbar .group-by-block span {
+    color: #f0f0f0 !important;
+}
+
+body.gantt-dark-mode .dhtmlx-stat-value {
+    color: #ffffff !important;
+}
+
+/* Dark mode button active state */
+body.gantt-dark-mode #dhtmlx-dark-mode-toggle {
+    background-color: #0e639c !important;
+    color: white !important;
+}
+
+/* Dark mode workload view */
+body.gantt-dark-mode #workload-content,
+body.gantt-dark-mode .workload-content,
+body.gantt-dark-mode .workload-panel {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode .workload-header,
+body.gantt-dark-mode .workload-header h4 {
+    background: #0d0d0d !important;
+    color: #f5f5f5 !important;
+    border-bottom: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode .workload-table,
+body.gantt-dark-mode .workload-table th,
+body.gantt-dark-mode .workload-table td,
+body.gantt-dark-mode .workload-table thead,
+body.gantt-dark-mode .workload-table tbody,
+body.gantt-dark-mode .workload-table tr {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .workload-task-item,
+body.gantt-dark-mode .workload-user-row,
+body.gantt-dark-mode .workload-task-row {
+    background: #0a0a0a !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode .workload-task-item:hover,
+body.gantt-dark-mode .workload-user-row:hover {
+    background: #1a1a1a !important;
+}
+
+body.gantt-dark-mode .workload-user-name,
+body.gantt-dark-mode .workload-task-name,
+body.gantt-dark-mode .workload-status {
+    color: #f5f5f5 !important;
+}
+
+/* Dark mode lightbox (create/edit task dialog) */
+body.gantt-dark-mode .gantt_cal_light,
+body.gantt-dark-mode .gantt_cal_light_wide {
+    background: #000000 !important;
+    border: 1px solid #3a3a3a !important;
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode .gantt_cal_lsection,
+body.gantt-dark-mode .gantt_cal_ltitle {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_cal_ltitle .gantt_time,
+body.gantt-dark-mode .gantt_cal_ltitle .dhx_title,
+body.gantt-dark-mode .gantt_cal_ltitle_descr,
+body.gantt-dark-mode .gantt_time,
+body.gantt-dark-mode .dhx_title,
+body.gantt-dark-mode .gantt_duration_end_date,
+body.gantt-dark-mode .gantt_duration_end_date span,
+body.gantt-dark-mode .gantt_time_selects,
+body.gantt-dark-mode .gantt_time_selects span {
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode .gantt_cal_ltitle_close_btn,
+body.gantt-dark-mode .dhx_gantt_icon_close {
+    color: #f5f5f5 !important;
+    opacity: 0.8;
+}
+
+body.gantt-dark-mode .gantt_cal_light label,
+body.gantt-dark-mode .gantt_cal_light .gantt_cal_lsection,
+body.gantt-dark-mode .gantt_cal_light .gantt_section_title {
+    color: #f5f5f5 !important;
+    background: #000000 !important;
+}
+
+body.gantt-dark-mode .gantt_cal_ltext,
+body.gantt-dark-mode .gantt_cal_ltextarea {
+    background: #000000 !important;
+}
+
+body.gantt-dark-mode .gantt_cal_ltext textarea,
+body.gantt-dark-mode .gantt_cal_ltext select,
+body.gantt-dark-mode .gantt_cal_ltext input,
+body.gantt-dark-mode .gantt_cal_ltextarea textarea,
+body.gantt-dark-mode .gantt_time_selects select {
+    background: #1a1a1a !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode .gantt_cal_light .gantt_cal_ltext input::placeholder,
+body.gantt-dark-mode .gantt_cal_light .gantt_cal_ltextarea textarea::placeholder {
+    color: #999999 !important;
+}
+
+body.gantt-dark-mode .gantt_btn_set,
+body.gantt-dark-mode .gantt_btn_set button,
+body.gantt-dark-mode .gantt_save_btn,
+body.gantt-dark-mode .gantt_cancel_btn,
+body.gantt-dark-mode .gantt_delete_btn,
+body.gantt-dark-mode .gantt_delete_btn_set,
+body.gantt-dark-mode .gantt_left_btn_set {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #000000 !important;
+}
+
+body.gantt-dark-mode .gantt_btn_set div,
+body.gantt-dark-mode .gantt_delete_btn_set div {
+    color: #f5f5f5 !important;
+}
+
+body.gantt-dark-mode .gantt_btn_set button:hover,
+body.gantt-dark-mode .gantt_save_btn:hover,
+body.gantt-dark-mode .gantt_cancel_btn:hover,
+body.gantt-dark-mode .gantt_delete_btn:hover {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+/* Sprint tasks dropdown - light mode */
+.sprint-tasks-block {
+    background: #ffffff;
+}
+
+.sprint-tasks-block input {
+    background: #ffffff;
+    color: #333333;
+    border-color: #cccccc;
+}
+
+/* Sprint task option - light mode default */
+.sprint-task-option {
+    background: transparent;
+    color: #333333;
+}
+
+/* Sprint task option - light mode selected */
+.sprint-task-option.selected {
+    background: #e3f2fd !important;
+    font-weight: bold !important;
+}
+
+/* Sprint task option - light mode hover */
+.sprint-task-option.hovered {
+    background: #f8f9fa !important;
+}
+
+/* Sprint task option - light mode selected + hover */
+.sprint-task-option.selected.hovered {
+    background: #bbdefb !important;
+}
+
+/* Sprint tasks dropdown - dark mode */
+body.gantt-dark-mode .sprint-tasks-block,
+body.gantt-dark-mode .sprint-tasks-block input {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+/* Sprint tasks dropdown container - dark mode */
+body.gantt-dark-mode .sprint-tasks-block > div {
+    background: #0d0d0d !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .sprint-tasks-block input::placeholder {
+    color: #999999 !important;
+}
+
+/* Sprint task option - dark mode default */
+body.gantt-dark-mode .sprint-task-option {
+    background: transparent !important;
+    color: #f5f5f5 !important;
+}
+
+/* Sprint task option - dark mode SELECTED (blue highlight) */
+body.gantt-dark-mode .sprint-task-option.selected {
+    background: #1e3a5f !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+}
+
+/* Sprint task option - dark mode hover */
+body.gantt-dark-mode .sprint-task-option.hovered {
+    background: #2a2a2a !important;
+}
+
+/* Sprint task option - dark mode selected + hover */
+body.gantt-dark-mode .sprint-task-option.selected.hovered {
+    background: #2a4a6f !important;
+}
+
+/* Sprint task badges (selected tasks shown below search) */
+body.gantt-dark-mode .sprint-tasks-block span[style*="background: rgb(33, 150, 243)"],
+body.gantt-dark-mode .sprint-tasks-block span[style*="background:#2196f3"],
+body.gantt-dark-mode .sprint-tasks-block span[style*="background: #2196f3"] {
+    background: #1e3a5f !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #3a5a8f !important;
+}
+
+/* Settings dropdown menu in dark mode */
+body.gantt-dark-mode #dhtmlx-settings-menu,
+body.gantt-dark-mode .dhtmlx-settings-menu {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #3a3a3a !important;
+}
+
+body.gantt-dark-mode #dhtmlx-settings-menu label,
+body.gantt-dark-mode .dhtmlx-settings-menu label,
+body.gantt-dark-mode .dhtmlx-settings-item,
+body.gantt-dark-mode .dhtmlx-settings-item label {
+    background: #000000 !important;
+    color: #f5f5f5 !important;
+    border-color: #3a3a3a !important;
+}
+
+body.gantt-dark-mode .dhtmlx-settings-item:hover {
+    background: #1a1a1a !important;
+}
+
+body.gantt-dark-mode .dhtmlx-settings-item input[type="checkbox"] {
+    accent-color: #0e639c !important;
+}
+
+/* ============================================
+   HIGHEST PRIORITY - Workload/Busyness Borders
+   Must be at the end to override all other rules
+   ============================================ */
+
+/* Workload borders in dark mode - FINAL OVERRIDE */
+body.gantt-dark-mode .workload-available,
+body.gantt-dark-mode .gantt_task_line.workload-available,
+body.gantt-dark-mode div.gantt_task_line.workload-available {
+    border: 3px solid #27ae60 !important;
+    border-color: #27ae60 !important;
+    border-style: solid !important;
+    border-width: 3px !important;
+}
+
+body.gantt-dark-mode .workload-busy,
+body.gantt-dark-mode .gantt_task_line.workload-busy,
+body.gantt-dark-mode div.gantt_task_line.workload-busy {
+    border: 3px solid #f39c12 !important;
+    border-color: #f39c12 !important;
+    border-style: solid !important;
+    border-width: 3px !important;
+}
+
+body.gantt-dark-mode .workload-overloaded,
+body.gantt-dark-mode .gantt_task_line.workload-overloaded,
+body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
+    border: 3px solid #e74c3c !important;
+    border-color: #e74c3c !important;
+    border-style: solid !important;
+    border-width: 3px !important;
+}

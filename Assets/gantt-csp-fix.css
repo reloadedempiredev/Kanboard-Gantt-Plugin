@@ -1,0 +1,335 @@
+/* 
+ * CSP-compliant fixes for DHTMLX Gantt GPL
+ * Replace icon fonts with simple text/symbols
+ */
+
+/* Force all gantt elements to use system fonts instead of icon fonts */
+[class*="gantt_"]::before,
+[class*="gantt_"]:before,
+[class*="gantt_"]::after,
+[class*="gantt_"]:after,
+[class*="dhx_"]::before,
+[class*="dhx_"]:before,
+[class*="dhx_"]::after,
+[class*="dhx_"]:after {
+    font-family: Arial, sans-serif !important;
+}
+
+/* Tree expand/collapse icons - use simple arrows */
+.gantt_tree_icon.gantt_open::before,
+.gantt_tree_icon.gantt_open:before {
+    content: '▼' !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 10px !important;
+}
+
+.gantt_tree_icon.gantt_close::before,
+.gantt_tree_icon.gantt_close:before {
+    content: '▶' !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 10px !important;
+}
+
+/* Add Task button - replace icon with "+" */
+.gantt_grid_head_add::before,
+.gantt_grid_head_add:before,
+.gantt_add::before,
+.gantt_add:before {
+    content: '+' !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+}
+
+/* Delete button - replace icon with "×" */
+.gantt_delete_btn::before,
+.gantt_delete_btn:before {
+    content: '×' !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+/* Sort icons - replace with arrows */
+.gantt_asc::before,
+.gantt_asc:before {
+    content: '↑' !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 14px !important;
+}
+
+.gantt_desc::before,
+.gantt_desc:before {
+    content: '↓' !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 14px !important;
+}
+
+/* ============ COMPLETE ARROW OVERRIDE - HIGHEST PRIORITY ============ */
+/* Completely hide and reset the :before pseudo-element that contains the icon */
+.gantt_task_link div.gantt_link_arrow::before,
+.gantt_task_link div.gantt_link_arrow:before,
+.gantt_link_arrow::before,
+.gantt_link_arrow:before {
+    content: '' !important;
+    display: none !important;
+    font-size: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Reset and override the arrow element completely */
+.gantt_task_link .gantt_link_arrow,
+.gantt_task_link div.gantt_link_arrow,
+.gantt_link_arrow,
+div.gantt_link_arrow {
+    /* Reset all default properties */
+    width: 0 !important;
+    height: 0 !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    font-family: none !important;
+    background: transparent !important;
+    color: transparent !important;
+    /* Now apply border-based triangle */
+    border-style: solid !important;
+    border-width: 7px 0 7px 10px !important;
+    border-color: transparent transparent transparent #4a8f43 !important;
+}
+
+/* Arrow pointing RIGHT */
+.gantt_link_arrow_right,
+.gantt_link_arrow.gantt_link_arrow_right,
+div.gantt_link_arrow.gantt_link_arrow_right {
+    border-width: 7px 0 7px 10px !important;
+    border-color: transparent transparent transparent #4a8f43 !important;
+}
+
+/* Arrow pointing LEFT */
+.gantt_link_arrow_left,
+.gantt_link_arrow.gantt_link_arrow_left,
+div.gantt_link_arrow.gantt_link_arrow_left {
+    border-width: 7px 10px 7px 0 !important;
+    border-color: transparent #4a8f43 transparent transparent !important;
+}
+
+/* Arrow pointing DOWN */
+.gantt_link_arrow_down,
+.gantt_link_arrow.gantt_link_arrow_down,
+div.gantt_link_arrow.gantt_link_arrow_down {
+    border-width: 10px 7px 0 7px !important;
+    border-color: #4a8f43 transparent transparent transparent !important;
+}
+
+/* Arrow pointing UP */
+.gantt_link_arrow_up,
+.gantt_link_arrow.gantt_link_arrow_up,
+div.gantt_link_arrow.gantt_link_arrow_up {
+    border-width: 0 7px 10px 7px !important;
+    border-color: transparent transparent #4a8f43 transparent !important;
+}
+
+/* ============ DARK MODE ARROWS ============ */
+/* Dark mode: white dependency lines and arrows */
+/* CRITICAL: Override the global dark mode border-color rule */
+body.gantt-dark-mode .gantt_data_area .gantt_task_link .gantt_link_arrow,
+body.gantt-dark-mode .gantt_container .gantt_link_arrow,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_link_arrow,
+body.gantt-dark-mode .gantt_task_link .gantt_link_arrow,
+body.gantt-dark-mode .gantt_link_arrow,
+body.gantt-dark-mode div.gantt_link_arrow {
+    border-color: transparent transparent transparent #ffffff !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    color: transparent !important;
+}
+
+/* Dark mode: Arrow pointing RIGHT */
+body.gantt-dark-mode .gantt_data_area .gantt_link_arrow_right,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_link_arrow_right,
+body.gantt-dark-mode .gantt_link_arrow_right,
+body.gantt-dark-mode .gantt_link_arrow.gantt_link_arrow_right,
+body.gantt-dark-mode div.gantt_link_arrow.gantt_link_arrow_right {
+    border-width: 7px 0 7px 10px !important;
+    border-color: transparent transparent transparent #ffffff !important;
+}
+
+/* Dark mode: Arrow pointing LEFT */
+body.gantt-dark-mode .gantt_data_area .gantt_link_arrow_left,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_link_arrow_left,
+body.gantt-dark-mode .gantt_link_arrow_left,
+body.gantt-dark-mode .gantt_link_arrow.gantt_link_arrow_left,
+body.gantt-dark-mode div.gantt_link_arrow.gantt_link_arrow_left {
+    border-width: 7px 10px 7px 0 !important;
+    border-color: transparent #ffffff transparent transparent !important;
+}
+
+/* Dark mode: Arrow pointing DOWN */
+body.gantt-dark-mode .gantt_data_area .gantt_link_arrow_down,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_link_arrow_down,
+body.gantt-dark-mode .gantt_link_arrow_down,
+body.gantt-dark-mode .gantt_link_arrow.gantt_link_arrow_down,
+body.gantt-dark-mode div.gantt_link_arrow.gantt_link_arrow_down {
+    border-width: 10px 7px 0 7px !important;
+    border-color: #ffffff transparent transparent transparent !important;
+}
+
+/* Dark mode: Arrow pointing UP */
+body.gantt-dark-mode .gantt_data_area .gantt_link_arrow_up,
+body.gantt-dark-mode #dhtmlx-gantt-chart .gantt_link_arrow_up,
+body.gantt-dark-mode .gantt_link_arrow_up,
+body.gantt-dark-mode .gantt_link_arrow.gantt_link_arrow_up,
+body.gantt-dark-mode div.gantt_link_arrow.gantt_link_arrow_up {
+    border-width: 0 7px 10px 7px !important;
+    border-color: transparent transparent #ffffff transparent !important;
+}
+
+body.gantt-dark-mode .gantt_task_link .gantt_line_wrapper div {
+    background-color: #ffffff !important;
+}
+
+/* Any remaining icon elements that need to be replaced */
+.dhx_gantt_icon::before,
+.dhx_gantt_icon:before {
+    font-family: Arial, sans-serif !important;
+    content: '•' !important;
+    font-size: 16px !important;
+}
+/* ========================================
+ * DARK MODE COMPATIBILITY
+ * Ensure text is visible in Galaxy/dark themes
+ * ======================================== */
+
+/* Gantt grid headers and cells - ensure contrast */
+.gantt_grid_head_cell,
+.gantt_grid_head_cell *,
+.gantt_cell {
+    color: inherit !important;
+}
+
+/* Task text in grid */
+.gantt_tree_content,
+.gantt_cell,
+.gantt_grid_data .gantt_cell {
+    color: inherit !important;
+}
+
+/* Timeline headers */
+.gantt_scale_line,
+.gantt_scale_cell,
+.gantt_task_scale .gantt_scale_cell {
+    color: inherit !important;
+}
+
+/* Task bars text */
+.gantt_task_content,
+.gantt_side_content {
+    color: #000 !important; /* Keep task bar text dark as bars are colored */
+}
+
+/* Buttons and controls */
+.gantt_grid_head_add,
+.gantt_add,
+.gantt_delete_btn {
+    color: inherit !important;
+}
+
+/* Lightbox (popup) text */
+.gantt_cal_light,
+.gantt_cal_light_wide,
+.gantt_cal_light .gantt_title,
+.gantt_cal_light input,
+.gantt_cal_light select,
+.gantt_cal_light textarea {
+    color: #333 !important;
+    background-color: #fff !important;
+}
+
+/* Links/dependency arrows - keep visible */
+.gantt_task_link,
+.gantt_line_wrapper {
+    opacity: 1 !important;
+}
+
+/* Tooltip text */
+.gantt_tooltip {
+    color: #333 !important;
+    background-color: #fff !important;
+    border: 1px solid #ccc !important;
+}
+
+/* ========================================
+ * TOOLBAR & CONTROLS - DARK MODE
+ * Remove hardcoded colors to let theme apply
+ * ======================================== */
+
+/* Group by dropdown label and icon */
+.fa-users,
+#dhtmlx-group-by,
+.dhtmlx-gantt-toolbar .fa-users,
+.dhtmlx-gantt-toolbar span {
+    /* Remove any hardcoded colors - let theme apply naturally */
+}
+
+/* Checkbox labels (Move dependencies, Show progress bars) */
+.dhtmlx-toggle,
+.dhtmlx-toggle label,
+label.dhtmlx-toggle {
+    /* Remove any hardcoded colors - let theme apply naturally */
+}
+
+.dhtmlx-toggle input[type="checkbox"] {
+    /* Keep checkboxes visible */
+}
+
+/* ========================================
+ * LEGEND - DARK MODE
+ * Remove hardcoded colors to let theme apply
+ * ======================================== */
+
+/* Legend section and all text within - NO color overrides */
+.dhtmlx-gantt-info,
+.dhtmlx-info-section,
+.dhtmlx-info-section h3,
+.dhtmlx-legend-two-column,
+.dhtmlx-legend-column,
+.dhtmlx-legend-column strong,
+.dhtmlx-legend-column span,
+.dhtmlx-legend-item,
+.dhtmlx-legend-item span {
+    /* Let theme colors apply naturally - don't override */
+}
+
+/* Legend headers (Task Types, Task Categories) */
+.dhtmlx-legend-column strong {
+    /* No opacity override */
+}
+
+/* Legend note text */
+.dhtmlx-legend-note {
+    /* Let theme apply */
+}
+
+/* No categories message */
+.dhtmlx-no-categories {
+    /* Let theme apply */
+}
+
+/* ========================================
+ * WORKLOAD PANEL - DARK MODE
+ * ======================================== */
+
+/* Workload panel text - let theme apply */
+.workload-header h4,
+.workload-loading,
+.workload-task-list {
+    /* No color override */
+}
+
+/* Stats in workload view - let theme apply */
+.dhtmlx-stat-label,
+.dhtmlx-stat-value {
+    /* No color override */
+}
