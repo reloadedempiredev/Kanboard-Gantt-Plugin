@@ -195,7 +195,7 @@ This plugin is released under the MIT License. DHTMLX Gantt is used under the GP
 
 ## Development Timeline
 
-I completed this implementation over a focused two-week development sprint (October 2024), delivering both major features with comprehensive testing and documentation. The plugin is currently production-ready and has been validated across multiple browsers and screen sizes.
+completed this implementation over focused development sprints, delivering both major features with comprehensive testing and documentation. The plugin is currently production-ready and has been validated across multiple browsers and screen sizes.
 
 ## Technical Support
 
