@@ -118,6 +118,29 @@
             <button id="dhtmlx-dark-mode-toggle" class="btn" title="<?= t('Toggle Dark Mode') ?>">
                 <i class="fa fa-moon-o"></i>
             </button>
+
+            <div class="dhtmlx-toolbar-separator"></div>
+
+            <div class="gantt-legend-chips">
+                <span class="gantt-legend-chip">
+                    <span class="gantt-legend-chip-color" style="background:#27ae60;"></span>
+                    <?= t('Milestone') ?>
+                </span>
+                <span class="gantt-legend-chip">
+                    <span class="gantt-legend-chip-color" style="background:#9b59b6;"></span>
+                    <?= t('Sprint') ?>
+                </span>
+                <?php
+                $groups = $groups ?? [];
+                foreach ($groups as $category):
+                    $catColor = !empty($category['color']) ? $category['color'] : '#bdc3c7';
+                ?>
+                <span class="gantt-legend-chip">
+                    <span class="gantt-legend-chip-color" style="background:<?= $catColor ?>;"></span>
+                    <?= $this->text->e($category['name']) ?>
+                </span>
+                <?php endforeach; ?>
+            </div>
         </div>
 
         <!-- Gantt Chart -->
@@ -134,77 +157,7 @@
              data-get-data-url="<?= $this->url->href('TaskGanttController', 'getData', array('project_id' => $project['id'], 'plugin' => 'DhtmlGantt')) ?>">
         </div>
 
-        <!-- Task Information Panel -->
-        <div class="dhtmlx-gantt-info" style="flex-shrink: 0; max-height: 250px; overflow-y: auto; overflow-x: hidden;">
-            <div class="dhtmlx-info-section">
-                <h3><?= t('Legend') ?></h3>
-                <div class="dhtmlx-legend-two-column">
-                    <!-- Left Column: Task Types -->
-                    <div class="dhtmlx-legend-column">
-                        <strong style="font-size: 11px; display: block; margin-bottom: 5px; color: #333;">
-                            <?= t('Task Types:') ?>
-                        </strong>
-                        <div class="dhtmlx-legend">
-                            <div class="dhtmlx-legend-item">
-                                <span class="dhtmlx-legend-color" style="background: #27ae60;"></span>
-                                <span style="color: #333;"><?= t('Milestone') ?></span>
-                            </div>
-                            <div class="dhtmlx-legend-item">
-                                <span class="dhtmlx-legend-color" style="background: #9b59b6;"></span>
-                                <span style="color: #333;"><?= t('Sprint') ?></span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Right Column: Task Categories (with auto-columns if > 5 categories) -->
-                    <?php
-                    // Display categories with their actual Kanboard colors
-                    $groups = $groups ?? [];  // Note: $groups var contains categories now
-                    
-                    if (!empty($groups)):
-                        // ✅ Split categories into chunks of 5 for multiple columns
-                        $groupChunks = array_chunk($groups, 5);
-                        
-                        foreach ($groupChunks as $chunkIndex => $chunk):
-                    ?>
-                        <div class="dhtmlx-legend-column">
-                            <?php if ($chunkIndex === 0): ?>
-                                <strong style="font-size: 11px; display: block; margin-bottom: 5px; color: #333;">
-                                    <?= t('Task Categories:') ?>
-                                </strong>
-                            <?php else: ?>
-                                <strong style="font-size: 11px; visibility: hidden; display: block; margin-bottom: 5px;">
-                                    &nbsp;
-                                </strong>
-                            <?php endif; ?>
-                            <div class="dhtmlx-legend">
-                                <?php foreach ($chunk as $category): ?>
-                                    <?php 
-                                    // ✅ Use actual Kanboard category color (passed from controller)
-                                    $categoryColor = isset($category['color']) && !empty($category['color']) ? $category['color'] : '#bdc3c7';
-                                    ?>
-                                    <div class="dhtmlx-legend-item">
-                                        <span class="dhtmlx-legend-color" 
-                                              style="background-color: <?= $categoryColor ?> !important; border: 1px solid rgba(0,0,0,0.2); display: inline-block;">
-                                        </span>
-                                        <span style="color: #333;"><?= $this->text->e($category['name']) ?></span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php 
-                        endforeach;
-                    else: 
-                    ?>
-                        <div class="dhtmlx-legend-column">
-                            <div style="padding: 8px; background: rgba(255, 193, 7, 0.2); border-left: 3px solid #ffc107; font-size: 12px;">
-                                ℹ️ <?= t('No categories used in this project.') ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
+        <!-- Legend moved to toolbar chips above -->
 
         <!-- Custom Workload Panel (hidden by default) -->
         <div id="workload-panel" class="workload-panel hidden">
@@ -235,34 +188,7 @@
     background: rgba(0,0,0,0.2);
     margin: 0 5px;
 }
-.dhtmlx-gantt-info {
-    border-top: 1px solid rgba(0,0,0,0.1);
-    padding: 15px;
-    display: flex;
-    gap: 30px;
-}
-.dhtmlx-info-section h3 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    font-weight: bold;
-}
-.dhtmlx-stats { display: flex; gap: 20px; }
-.dhtmlx-stat-item { display: flex; flex-direction: column; align-items: center; }
-.dhtmlx-stat-label { font-size: 12px; }
-.dhtmlx-stat-value { font-size: 18px; font-weight: bold; }
-.dhtmlx-legend { display: flex; flex-direction: column; gap: 5px; }
-.dhtmlx-legend-two-column { display: flex; gap: 30px; }
-.dhtmlx-legend-column { flex: 1; min-width: 0; }
-.dhtmlx-legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.dhtmlx-legend-color { 
-    width: 16px !important; 
-    height: 16px !important; 
-    min-width: 16px;
-    min-height: 16px;
-    border-radius: 3px; 
-    display: inline-block !important;
-    flex-shrink: 0;
-}
+/* Old bottom legend panel removed; chips are in the toolbar now */
 .gantt_task_line.dhtmlx-readonly { opacity: 0.6; }
 .btn-dhtmlx-view.active { background-color: #667eea !important; color: white !important; }
 .dhtmlx-toggle { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }

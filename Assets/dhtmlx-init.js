@@ -1128,10 +1128,11 @@ function initDhtmlxGantt() {
         console.log('Using default zoom level: day view');
     }
     
-    // Ensure grid is visible
-    gantt.config.grid_width = 400;
+    // Ensure grid is visible and resizable
+    gantt.config.grid_width = 500;
     gantt.config.show_grid = true;
-    
+    gantt.config.grid_resize = true;
+
     // Enable plugins
     gantt.plugins({
         tooltip: true,
@@ -1140,36 +1141,199 @@ function initDhtmlxGantt() {
         grouping: true
         // NOTE: auto_scheduling is a PRO feature, not available in GPL
     });
-    
+
     // Enable drag for links
     gantt.config.drag_links = true;
     gantt.config.show_links = true;
-    
+
     // Configure link types
     gantt.config.types = {
         task: "task",
         project: "project",
         milestone: "milestone"
     };
-    
-    console.log('✅ Gantt configured (GPL version - manual dependency movement)');
 
-
+    console.log('Gantt configured (GPL version - manual dependency movement)');
 
 
 
 
     
     
-    // Configure columns
-    gantt.config.columns = [
-        {name: "text", label: "Task Name", tree: true, width: 200, resize: true},
+    // Configurable column system with localStorage persistence
+    var allAvailableColumns = [
+        {name: "text", label: "Task Name", tree: true, width: 200, resize: true, alwaysVisible: true},
         {name: "start_date", label: "Start Date", align: "center", width: 100, resize: true},
+        {name: "end_date", label: "End Date", align: "center", width: 100, resize: true,
+            template: function(task) {
+                if (task.end_date) {
+                    return gantt.date.date_to_str("%Y-%m-%d")(task.end_date);
+                }
+                return "";
+            }
+        },
         {name: "duration", label: "Duration", align: "center", width: 60, resize: true},
         {name: "progress", label: "Progress", align: "center", width: 80, resize: true},
         {name: "priority", label: "Priority", align: "center", width: 80, resize: true},
-        {name: "add", label: "", width: 44}
+        {name: "assignee", label: "Assignee", align: "center", width: 120, resize: true,
+            template: function(task) {
+                return task.assignee || "Unassigned";
+            }
+        },
+        {name: "column_name", label: "Status", align: "center", width: 100, resize: true,
+            template: function(task) {
+                return task.column_name || "";
+            }
+        }
     ];
+
+    var defaultVisibleColumns = ["text", "start_date", "duration", "progress", "priority"];
+
+    function loadColumnPreferences() {
+        try {
+            var stored = localStorage.getItem("gantt_visible_columns");
+            if (stored) {
+                var parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    if (parsed.indexOf("text") === -1) {
+                        parsed.unshift("text");
+                    }
+                    return parsed;
+                }
+            }
+        } catch (e) {
+            // ignore
+        }
+        return defaultVisibleColumns.slice();
+    }
+
+    function saveColumnPreferences(visibleNames) {
+        try {
+            localStorage.setItem("gantt_visible_columns", JSON.stringify(visibleNames));
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    function loadColumnWidths() {
+        try {
+            var stored = localStorage.getItem("gantt_column_widths");
+            if (stored) {
+                return JSON.parse(stored);
+            }
+        } catch (e) {
+            // ignore
+        }
+        return {};
+    }
+
+    function saveColumnWidths() {
+        var widths = {};
+        (gantt.config.columns || []).forEach(function(col) {
+            if (col.name && col.name !== "add" && col.width) {
+                widths[col.name] = col.width;
+            }
+        });
+        try {
+            localStorage.setItem("gantt_column_widths", JSON.stringify(widths));
+        } catch (e) {
+            // ignore
+        }
+    }
+
+    function applyColumns(visibleNames) {
+        var savedWidths = loadColumnWidths();
+        var columns = [];
+        visibleNames.forEach(function(name) {
+            for (var i = 0; i < allAvailableColumns.length; i++) {
+                if (allAvailableColumns[i].name === name) {
+                    var col = Object.assign({}, allAvailableColumns[i]);
+                    if (savedWidths[name]) {
+                        col.width = savedWidths[name];
+                    }
+                    columns.push(col);
+                    break;
+                }
+            }
+        });
+        columns.push({name: "add", label: "", width: 44});
+        gantt.config.columns = columns;
+    }
+
+    var currentVisibleColumns = loadColumnPreferences();
+    applyColumns(currentVisibleColumns);
+
+    gantt.attachEvent("onGridResizeEnd", function() {
+        saveColumnWidths();
+        return true;
+    });
+
+    // Build column selector UI after gantt renders
+    function buildColumnSelector() {
+        var container = document.getElementById("dhtmlx-gantt-chart");
+        if (!container) return;
+
+        var existing = document.getElementById("gantt-column-selector");
+        if (existing) existing.remove();
+
+        var wrapper = document.createElement("div");
+        wrapper.id = "gantt-column-selector";
+        wrapper.className = "gantt-column-selector";
+
+        var btn = document.createElement("button");
+        btn.className = "gantt-column-selector-btn";
+        btn.textContent = "Columns";
+        btn.title = "Choose which columns to display";
+
+        var dropdown = document.createElement("div");
+        dropdown.className = "gantt-column-dropdown";
+        dropdown.style.display = "none";
+
+        allAvailableColumns.forEach(function(col) {
+            var label = document.createElement("label");
+            label.className = "gantt-column-option";
+            var cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = col.name;
+            cb.checked = currentVisibleColumns.indexOf(col.name) !== -1;
+            if (col.alwaysVisible) {
+                cb.disabled = true;
+                cb.checked = true;
+            }
+            cb.addEventListener("change", function() {
+                var idx = currentVisibleColumns.indexOf(col.name);
+                if (this.checked && idx === -1) {
+                    currentVisibleColumns.push(col.name);
+                } else if (!this.checked && idx !== -1 && !col.alwaysVisible) {
+                    currentVisibleColumns.splice(idx, 1);
+                }
+                saveColumnPreferences(currentVisibleColumns);
+                applyColumns(currentVisibleColumns);
+                gantt.render();
+            });
+            var span = document.createElement("span");
+            span.textContent = col.label;
+            label.appendChild(cb);
+            label.appendChild(span);
+            dropdown.appendChild(label);
+        });
+
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            var isOpen = dropdown.style.display !== "none";
+            dropdown.style.display = isOpen ? "none" : "block";
+        });
+
+        document.addEventListener("click", function(e) {
+            if (!wrapper.contains(e.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        wrapper.appendChild(btn);
+        wrapper.appendChild(dropdown);
+        container.parentNode.insertBefore(wrapper, container);
+    }
     
     //new
     gantt.templates.task_class = function(start, end, task) {
@@ -2359,7 +2523,7 @@ gantt.form_blocks["template"] = {
     // Initialize Gantt
     try {
         gantt.init("dhtmlx-gantt-chart");
-
+        buildColumnSelector();
         console.log('DHtmlX Gantt initialized successfully');
         
         // ========== FIX ARROW HEADS WITH JAVASCRIPT ==========
