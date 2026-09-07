@@ -1488,6 +1488,11 @@ function initDhtmlxGantt() {
     var allSideTextOptions = [
         {name: "assignee", label: "Assignee"},
         {name: "task_name", label: "Task Name"},
+        {name: "start_date", label: "Start Date"},
+        {name: "end_date", label: "End Date"},
+        {name: "duration", label: "Duration"},
+        {name: "progress", label: "Progress"},
+        {name: "priority", label: "Priority"},
         {name: "status", label: "Status/Column"}
     ];
     var defaultSideText = [];
@@ -1707,6 +1712,21 @@ function initDhtmlxGantt() {
         }
         if (activeSideText.indexOf("task_name") !== -1 && task.text) {
             parts.push(escapeHtml(task.text));
+        }
+        if (activeSideText.indexOf("start_date") !== -1 && task.start_date) {
+            parts.push(gantt.date.date_to_str("%Y-%m-%d")(task.start_date));
+        }
+        if (activeSideText.indexOf("end_date") !== -1 && task.end_date) {
+            parts.push(gantt.date.date_to_str("%Y-%m-%d")(task.end_date));
+        }
+        if (activeSideText.indexOf("duration") !== -1 && task.duration) {
+            parts.push(task.duration + "d");
+        }
+        if (activeSideText.indexOf("progress") !== -1) {
+            parts.push(Math.round((task.progress || 0) * 100) + "%");
+        }
+        if (activeSideText.indexOf("priority") !== -1 && task.priority) {
+            parts.push(escapeHtml(task.priority));
         }
         if (activeSideText.indexOf("status") !== -1 && task.column_name) {
             parts.push(escapeHtml(task.column_name));
