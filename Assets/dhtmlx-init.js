@@ -1458,11 +1458,12 @@ function initDhtmlxGantt() {
     // Bar label toggle system — controls what text appears on Gantt bars
     // Bar Labels: content shown INSIDE the task bar
     var allBarLabelOptions = [
+        {name: "title", label: "Title"},
         {name: "duration", label: "Duration"},
         {name: "start_date", label: "Start Date"},
         {name: "priority", label: "Priority"}
     ];
-    var defaultBarLabels = [];
+    var defaultBarLabels = ["title"];
 
     function loadBarLabelPreferences() {
         try {
@@ -1682,7 +1683,10 @@ function initDhtmlxGantt() {
         if (task.is_milestone) {
             return "M";
         }
-        var parts = [escapeHtml(task.text)];
+        var parts = [];
+        if (activeBarLabels.indexOf("title") !== -1) {
+            parts.push(escapeHtml(task.text));
+        }
         if (activeBarLabels.indexOf("duration") !== -1 && task.duration) {
             parts.push(task.duration + "d");
         }
