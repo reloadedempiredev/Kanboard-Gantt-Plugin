@@ -267,46 +267,46 @@ body.gantt-dark-mode .gantt-sprint-create-link a {
     border-radius: 3px;
 }
 
-/* Kanboard color matching — both classes are on the same .gantt_task_line element */
-.gantt_task_line.gantt-kb-color-yellow { background: #fdf499 !important; border-color: #e6da7a !important; }
+/* Kanboard color matching — override --dhx-gantt-task-background so workload rules inherit the correct color */
+.gantt_task_line.gantt-kb-color-yellow { --dhx-gantt-task-background: #fdf499 !important; background: var(--dhx-gantt-task-background) !important; border-color: #e6da7a !important; }
 .gantt_task_line.gantt-kb-color-yellow .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-blue { background: #d1e5f7 !important; border-color: #a9c9e8 !important; }
+.gantt_task_line.gantt-kb-color-blue { --dhx-gantt-task-background: #d1e5f7 !important; background: var(--dhx-gantt-task-background) !important; border-color: #a9c9e8 !important; }
 .gantt_task_line.gantt-kb-color-blue .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-green { background: #bef0cb !important; border-color: #8ed89e !important; }
+.gantt_task_line.gantt-kb-color-green { --dhx-gantt-task-background: #bef0cb !important; background: var(--dhx-gantt-task-background) !important; border-color: #8ed89e !important; }
 .gantt_task_line.gantt-kb-color-green .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-orange { background: #fadcb2 !important; border-color: #e8c28a !important; }
+.gantt_task_line.gantt-kb-color-orange { --dhx-gantt-task-background: #fadcb2 !important; background: var(--dhx-gantt-task-background) !important; border-color: #e8c28a !important; }
 .gantt_task_line.gantt-kb-color-orange .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-purple { background: #dfc0eb !important; border-color: #c99fdb !important; }
+.gantt_task_line.gantt-kb-color-purple { --dhx-gantt-task-background: #dfc0eb !important; background: var(--dhx-gantt-task-background) !important; border-color: #c99fdb !important; }
 .gantt_task_line.gantt-kb-color-purple .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-red { background: #f9c7c8 !important; border-color: #e8a5a5 !important; }
+.gantt_task_line.gantt-kb-color-red { --dhx-gantt-task-background: #f9c7c8 !important; background: var(--dhx-gantt-task-background) !important; border-color: #e8a5a5 !important; }
 .gantt_task_line.gantt-kb-color-red .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-grey { background: #eeeeee !important; border-color: #ccc !important; }
+.gantt_task_line.gantt-kb-color-grey { --dhx-gantt-task-background: #eeeeee !important; background: var(--dhx-gantt-task-background) !important; border-color: #ccc !important; }
 .gantt_task_line.gantt-kb-color-grey .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-amber { background: #ffe082 !important; border-color: #e6c766 !important; }
+.gantt_task_line.gantt-kb-color-amber { --dhx-gantt-task-background: #ffe082 !important; background: var(--dhx-gantt-task-background) !important; border-color: #e6c766 !important; }
 .gantt_task_line.gantt-kb-color-amber .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-deep_orange { background: #ffab91 !important; border-color: #e88e73 !important; }
+.gantt_task_line.gantt-kb-color-deep_orange { --dhx-gantt-task-background: #ffab91 !important; background: var(--dhx-gantt-task-background) !important; border-color: #e88e73 !important; }
 .gantt_task_line.gantt-kb-color-deep_orange .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-lime { background: #e6ee9c !important; border-color: #cdd67e !important; }
+.gantt_task_line.gantt-kb-color-lime { --dhx-gantt-task-background: #e6ee9c !important; background: var(--dhx-gantt-task-background) !important; border-color: #cdd67e !important; }
 .gantt_task_line.gantt-kb-color-lime .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-light_green { background: #c5e1a5 !important; border-color: #a4c884 !important; }
+.gantt_task_line.gantt-kb-color-light_green { --dhx-gantt-task-background: #c5e1a5 !important; background: var(--dhx-gantt-task-background) !important; border-color: #a4c884 !important; }
 .gantt_task_line.gantt-kb-color-light_green .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-teal { background: #80cbc4 !important; border-color: #5db0a8 !important; }
+.gantt_task_line.gantt-kb-color-teal { --dhx-gantt-task-background: #80cbc4 !important; background: var(--dhx-gantt-task-background) !important; border-color: #5db0a8 !important; }
 .gantt_task_line.gantt-kb-color-teal .gantt_task_content { color: #fff !important; }
-.gantt_task_line.gantt-kb-color-cyan { background: #80deea !important; border-color: #5cc5d2 !important; }
+.gantt_task_line.gantt-kb-color-cyan { --dhx-gantt-task-background: #80deea !important; background: var(--dhx-gantt-task-background) !important; border-color: #5cc5d2 !important; }
 .gantt_task_line.gantt-kb-color-cyan .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-pink { background: #f48fb1 !important; border-color: #d87393 !important; }
+.gantt_task_line.gantt-kb-color-pink { --dhx-gantt-task-background: #f48fb1 !important; background: var(--dhx-gantt-task-background) !important; border-color: #d87393 !important; }
 .gantt_task_line.gantt-kb-color-pink .gantt_task_content { color: #333 !important; }
-.gantt_task_line.gantt-kb-color-brown { background: #bcaaa4 !important; border-color: #9f8d85 !important; }
+.gantt_task_line.gantt-kb-color-brown { --dhx-gantt-task-background: #bcaaa4 !important; background: var(--dhx-gantt-task-background) !important; border-color: #9f8d85 !important; }
 .gantt_task_line.gantt-kb-color-brown .gantt_task_content { color: #fff !important; }
 
 /* Dark mode overrides for Kanboard colors */
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-yellow { background: #c9b836 !important; border-color: #a89828 !important; }
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-blue { background: #5b8fb9 !important; border-color: #4a7a9e !important; }
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-green { background: #5ba96b !important; border-color: #488f56 !important; }
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-orange { background: #c9923e !important; border-color: #a97a2e !important; }
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-purple { background: #8f5ba5 !important; border-color: #764a8a !important; }
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-red { background: #c45656 !important; border-color: #a44040 !important; }
-body.gantt-dark-mode .gantt_task_line.gantt-kb-color-grey { background: #777 !important; border-color: #666 !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-yellow { --dhx-gantt-task-background: #c9b836 !important; background: var(--dhx-gantt-task-background) !important; border-color: #a89828 !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-blue { --dhx-gantt-task-background: #5b8fb9 !important; background: var(--dhx-gantt-task-background) !important; border-color: #4a7a9e !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-green { --dhx-gantt-task-background: #5ba96b !important; background: var(--dhx-gantt-task-background) !important; border-color: #488f56 !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-orange { --dhx-gantt-task-background: #c9923e !important; background: var(--dhx-gantt-task-background) !important; border-color: #a97a2e !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-purple { --dhx-gantt-task-background: #8f5ba5 !important; background: var(--dhx-gantt-task-background) !important; border-color: #764a8a !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-red { --dhx-gantt-task-background: #c45656 !important; background: var(--dhx-gantt-task-background) !important; border-color: #a44040 !important; }
+body.gantt-dark-mode .gantt_task_line.gantt-kb-color-grey { --dhx-gantt-task-background: #777 !important; background: var(--dhx-gantt-task-background) !important; border-color: #666 !important; }
 
 /* DHtmlX Gantt Task Priority Styles */
 .dhtmlx-priority-high .gantt_task_line {
