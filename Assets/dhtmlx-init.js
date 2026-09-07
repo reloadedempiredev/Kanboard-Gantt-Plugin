@@ -1164,17 +1164,10 @@ function initDhtmlxGantt() {
     var currentSortField = null;
     var currentSortDesc = false;
 
-    gantt.attachEvent("onGridHeaderClick", function(name, e) {
-        if (name === "add") return true;
-        if (name === currentSortField) {
-            currentSortDesc = !currentSortDesc;
-        } else {
-            currentSortField = name;
-            currentSortDesc = false;
-        }
-        gantt.sort(currentSortField, currentSortDesc);
+    var priorityRank = {urgent: 0, high: 1, normal: 2, low: 3};
 
-        // Update header arrow indicators
+    function applySortArrows() {
+        if (!currentSortField) return;
         var headers = document.querySelectorAll(".gantt_grid_head_cell");
         for (var i = 0; i < headers.length; i++) {
             var arrow = headers[i].querySelector(".gantt-sort-arrow");
@@ -1193,7 +1186,31 @@ function initDhtmlxGantt() {
                 break;
             }
         }
+    }
+
+    gantt.attachEvent("onGridHeaderClick", function(name, e) {
+        if (name === "add") return true;
+        if (name === currentSortField) {
+            currentSortDesc = !currentSortDesc;
+        } else {
+            currentSortField = name;
+            currentSortDesc = false;
+        }
+        if (currentSortField === "priority") {
+            gantt.sort(function(a, b) {
+                var ra = priorityRank[a.priority] !== undefined ? priorityRank[a.priority] : 99;
+                var rb = priorityRank[b.priority] !== undefined ? priorityRank[b.priority] : 99;
+                return currentSortDesc ? rb - ra : ra - rb;
+            });
+        } else {
+            gantt.sort(currentSortField, currentSortDesc);
+        }
+        applySortArrows();
         return false;
+    });
+
+    gantt.attachEvent("onGanttRender", function() {
+        applySortArrows();
     });
 
     // Enable plugins
@@ -2610,39 +2627,73 @@ gantt.form_blocks["template"] = {
             if (!splitterEl) return;
 
             var isDragging = false;
+            var activePointerId = -1;
             var startX = 0;
             var startWidth = 0;
+            var lastAppliedWidth = -1;
+            var rafId = 0;
 
             splitterEl.style.cursor = 'col-resize';
             splitterEl.style.zIndex = '5';
+            splitterEl.style.touchAction = 'none';
 
-            splitterEl.addEventListener('pointerdown', function(e) {
+            function cleanup() {
+                isDragging = false;
+                activePointerId = -1;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+                if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+            }
+
+            function onPointerDown(e) {
+                if (e.button !== 0) return;
                 isDragging = true;
+                activePointerId = e.pointerId;
                 startX = e.clientX;
                 var gridPane = gantt.getLayoutView("gridPane");
                 startWidth = gridPane ? gridPane.$config.width : 500;
+                lastAppliedWidth = startWidth;
+                splitterEl.setPointerCapture(e.pointerId);
                 e.preventDefault();
                 document.body.style.cursor = 'col-resize';
                 document.body.style.userSelect = 'none';
-            });
+            }
 
-            document.addEventListener('pointermove', function(e) {
-                if (!isDragging) return;
+            function onPointerMove(e) {
+                if (!isDragging || e.pointerId !== activePointerId) return;
                 var delta = e.clientX - startX;
-                var newWidth = Math.max(200, Math.min(startWidth + delta, window.innerWidth - 200));
-                var gridPane = gantt.getLayoutView("gridPane");
-                if (gridPane) {
-                    gridPane.$config.width = newWidth;
-                    gantt.setSizes();
-                }
-            });
+                var container = document.getElementById('dhtmlx-gantt-chart');
+                var containerWidth = container ? container.offsetWidth : 1000;
+                var newWidth = Math.max(200, Math.min(startWidth + delta, containerWidth - 200 - 6));
+                if (newWidth === lastAppliedWidth) return;
+                lastAppliedWidth = newWidth;
+                if (rafId) cancelAnimationFrame(rafId);
+                rafId = requestAnimationFrame(function() {
+                    rafId = 0;
+                    var gridPane = gantt.getLayoutView("gridPane");
+                    if (gridPane) {
+                        gridPane.$config.width = newWidth;
+                        gantt.setSizes();
+                    }
+                });
+            }
 
-            document.addEventListener('pointerup', function() {
-                if (!isDragging) return;
-                isDragging = false;
-                document.body.style.cursor = '';
-                document.body.style.userSelect = '';
-            });
+            function onPointerUp(e) {
+                if (!isDragging || e.pointerId !== activePointerId) return;
+                cleanup();
+            }
+
+            function onPointerCancel(e) {
+                if (e.pointerId !== activePointerId) return;
+                cleanup();
+            }
+
+            splitterEl.addEventListener('pointerdown', onPointerDown);
+            document.addEventListener('pointermove', onPointerMove);
+            document.addEventListener('pointerup', onPointerUp);
+            document.addEventListener('pointercancel', onPointerCancel);
+            splitterEl.addEventListener('lostpointercapture', cleanup);
+            window.addEventListener('blur', cleanup);
         })();
 
         console.log('DHtmlX Gantt initialized successfully');
