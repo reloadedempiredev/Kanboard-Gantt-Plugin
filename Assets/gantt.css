@@ -1474,3 +1474,19 @@ body.gantt-dark-mode .gantt-sort-arrow {
 .gantt_grid_head_cell:hover {
     opacity: 0.8;
 }
+
+/* Custom grid/timeline splitter (GPL — native resizer is Pro-only) */
+.custom-grid-splitter {
+    background: #d0d0d0;
+    cursor: col-resize;
+    transition: background 0.2s;
+}
+.custom-grid-splitter:hover {
+    background: #aaa;
+}
+body.gantt-dark-mode .custom-grid-splitter {
+    background: #555;
+}
+body.gantt-dark-mode .custom-grid-splitter:hover {
+    background: #777;
+}

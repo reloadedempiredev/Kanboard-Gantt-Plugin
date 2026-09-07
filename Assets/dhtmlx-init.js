@@ -1133,19 +1133,20 @@ function initDhtmlxGantt() {
     gantt.config.show_grid = true;
     gantt.config.grid_resize = true;
 
-    // DHtmlX v9 requires explicit layout with resizer for grid/timeline split drag
+    // Custom layout with a draggable splitter cell (native resizer is Pro-only in v9 GPL)
     gantt.config.layout = {
         css: "gantt_container",
         cols: [
             {
+                id: "gridPane",
                 width: 500,
-                min_width: 200,
+                minWidth: 200,
                 rows: [
                     {view: "grid", scrollX: "gridScroll", scrollable: true, scrollY: "scrollVer"},
                     {view: "scrollbar", id: "gridScroll", group: "horizontal"}
                 ]
             },
-            {resizer: true, width: 1},
+            {id: "gridSplitter", width: 6, css: "custom-grid-splitter"},
             {
                 rows: [
                     {view: "timeline", scrollX: "scrollHor", scrollY: "scrollVer"},
@@ -2602,6 +2603,48 @@ gantt.form_blocks["template"] = {
     try {
         gantt.init("dhtmlx-gantt-chart");
         buildColumnSelector();
+
+        // Custom grid/timeline splitter (GPL workaround — native resizer is Pro-only)
+        (function initCustomSplitter() {
+            var splitterEl = document.querySelector('.custom-grid-splitter');
+            if (!splitterEl) return;
+
+            var isDragging = false;
+            var startX = 0;
+            var startWidth = 0;
+
+            splitterEl.style.cursor = 'col-resize';
+            splitterEl.style.zIndex = '5';
+
+            splitterEl.addEventListener('pointerdown', function(e) {
+                isDragging = true;
+                startX = e.clientX;
+                var gridPane = gantt.getLayoutView("gridPane");
+                startWidth = gridPane ? gridPane.$config.width : 500;
+                e.preventDefault();
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+            });
+
+            document.addEventListener('pointermove', function(e) {
+                if (!isDragging) return;
+                var delta = e.clientX - startX;
+                var newWidth = Math.max(200, Math.min(startWidth + delta, window.innerWidth - 200));
+                var gridPane = gantt.getLayoutView("gridPane");
+                if (gridPane) {
+                    gridPane.$config.width = newWidth;
+                    gantt.setSizes();
+                }
+            });
+
+            document.addEventListener('pointerup', function() {
+                if (!isDragging) return;
+                isDragging = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            });
+        })();
+
         console.log('DHtmlX Gantt initialized successfully');
         
         // ========== FIX ARROW HEADS WITH JAVASCRIPT ==========
