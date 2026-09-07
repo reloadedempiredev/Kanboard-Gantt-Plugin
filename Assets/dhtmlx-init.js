@@ -1310,7 +1310,19 @@ function initDhtmlxGantt() {
         try {
             var stored = localStorage.getItem("gantt_column_widths");
             if (stored) {
-                return JSON.parse(stored);
+                var parsed = JSON.parse(stored);
+                if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+                    var validated = {};
+                    for (var key in parsed) {
+                        if (parsed.hasOwnProperty(key)) {
+                            var val = Number(parsed[key]);
+                            if (isFinite(val) && val > 0) {
+                                validated[key] = val;
+                            }
+                        }
+                    }
+                    return validated;
+                }
             }
         } catch (e) {
             // ignore
@@ -1321,7 +1333,7 @@ function initDhtmlxGantt() {
     function saveColumnWidths() {
         var widths = {};
         (gantt.config.columns || []).forEach(function(col) {
-            if (col.name && col.name !== "add" && col.width) {
+            if (col.name && col.width) {
                 widths[col.name] = col.width;
             }
         });
@@ -1341,7 +1353,7 @@ function initDhtmlxGantt() {
                 if (allAvailableColumns[i].name === name) {
                     var col = Object.assign({}, allAvailableColumns[i]);
                     if (savedWidths[name]) {
-                        col.width = savedWidths[name];
+                        col.width = Math.max(50, savedWidths[name]);
                     }
                     totalWidth += col.width || 100;
                     columns.push(col);
@@ -1349,13 +1361,16 @@ function initDhtmlxGantt() {
                 }
             }
         });
-        columns.push({name: "add", label: "", width: 44});
-        totalWidth += 44;
+        var addWidth = Math.max(50, savedWidths.add || 50);
+        columns.push({name: "add", label: "", width: addWidth});
+        totalWidth += addWidth;
         gantt.config.columns = columns;
 
         var gridPane = gantt.getLayoutView ? gantt.getLayoutView("gridPane") : null;
         if (gridPane) {
-            gridPane.$config.width = Math.max(200, totalWidth + 20);
+            var containerWidth = (document.getElementById("dhtmlx-gantt-chart") || {}).offsetWidth || 1200;
+            var maxGridWidth = containerWidth - 200 - 6;
+            gridPane.$config.width = Math.max(200, Math.min(totalWidth + 20, maxGridWidth));
             gantt.setSizes();
         }
     }
@@ -1596,17 +1611,24 @@ function initDhtmlxGantt() {
         return "";
     };
     
-    // Update tooltip to show category and assignee information
     gantt.templates.tooltip_text = function(start, end, task) {
-        var assigneeLabel = task.assignee || 'Unassigned';
-        var categoryLabel = task.group || 'No Category';  // task.group contains category name
-        
-        return "<b>Task:</b> " + task.text + "<br/>" +
-               "<b>Category:</b> <span style='font-weight:bold;'>" + categoryLabel + "</span><br/>" +
-               "<b>Assigned to:</b> " + assigneeLabel + "<br/>" +
-               "<b>Start:</b> " + gantt.templates.tooltip_date_format(start) + "<br/>" +
-               "<b>End:</b> " + gantt.templates.tooltip_date_format(end) + "<br/>" +
-               "<b>Progress:</b> " + Math.round(task.progress * 100) + "%";
+        var html = "<b>Task:</b> " + escapeHtml(task.text) + "<br/>";
+        html += "<b>Start:</b> " + gantt.templates.tooltip_date_format(start) + "<br/>";
+        html += "<b>End:</b> " + gantt.templates.tooltip_date_format(end) + "<br/>";
+        html += "<b>Progress:</b> " + Math.round(task.progress * 100) + "%<br/>";
+        if (task.priority) {
+            html += "<b>Priority:</b> " + escapeHtml(task.priority) + "<br/>";
+        }
+        if (task.assignee) {
+            html += "<b>Assignee:</b> " + escapeHtml(task.assignee) + "<br/>";
+        }
+        if (task.column_name) {
+            html += "<b>Status:</b> " + escapeHtml(task.column_name) + "<br/>";
+        }
+        if (task.group) {
+            html += "<b>Category:</b> " + escapeHtml(task.group) + "<br/>";
+        }
+        return html;
     };
     //new
 
@@ -2739,6 +2761,123 @@ gantt.form_blocks["template"] = {
         buildColumnSelector();
         buildBarLabelSelector();
 
+        // Share ownership so column and pane drags cannot overlap.
+        var isResizingGrid = false;
+
+        // Custom column resizing for the GPL build, which has no header resizers.
+        (function initCustomColumnResize() {
+            var activeResize = null;
+
+            function cleanup() {
+                if (!activeResize) return;
+                var resize = activeResize;
+                activeResize = null;
+                isResizingGrid = false;
+                resize.handle.classList.remove('gantt-column-resize-active');
+                document.body.style.cursor = resize.bodyCursor;
+                document.body.style.userSelect = resize.bodyUserSelect;
+                if (resize.handle.hasPointerCapture(resize.pointerId)) {
+                    resize.handle.releasePointerCapture(resize.pointerId);
+                }
+            }
+
+            function cancelResize() {
+                if (!activeResize) return;
+                activeResize.column.width = activeResize.originalWidth;
+                cleanup();
+            }
+
+            function onPointerDown(e, column, header, handle) {
+                if (e.button !== 0 || isResizingGrid) return;
+                e.preventDefault();
+                e.stopPropagation();
+                handle.setPointerCapture(e.pointerId);
+                activeResize = {
+                    column: column,
+                    header: header,
+                    handle: handle,
+                    pointerId: e.pointerId,
+                    startX: e.clientX,
+                    startWidth: column.width,
+                    headerWidth: header.offsetWidth,
+                    scaleWidth: header.parentNode.offsetWidth,
+                    originalWidth: column.width,
+                    bodyCursor: document.body.style.cursor,
+                    bodyUserSelect: document.body.style.userSelect
+                };
+                isResizingGrid = true;
+                handle.classList.add('gantt-column-resize-active');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+            }
+
+            function onPointerMove(e) {
+                if (!activeResize || e.pointerId !== activeResize.pointerId) return;
+                var resize = activeResize;
+                var width = Math.max(50, resize.startWidth + e.clientX - resize.startX);
+                resize.column.width = width;
+                // Preview the header without replacing the captured handle during the drag.
+                resize.header.style.width = (resize.headerWidth + width - resize.startWidth) + 'px';
+                resize.header.parentNode.style.width = (resize.scaleWidth + width - resize.startWidth) + 'px';
+            }
+
+            function onPointerUp(e) {
+                if (!activeResize || e.pointerId !== activeResize.pointerId) return;
+                onPointerMove(e);
+                cleanup();
+                gantt.render();
+                saveColumnWidths();
+            }
+
+            function onPointerCancel(e) {
+                if (!activeResize || e.pointerId !== activeResize.pointerId) return;
+                cancelResize();
+                gantt.render();
+            }
+
+            function stopHeaderClick(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function buildResizeHandles() {
+                container.querySelectorAll('.gantt_grid_head_cell').forEach(function(header) {
+                    if (header.querySelector('.gantt-column-resize-handle')) return;
+                    var name = header.getAttribute('data-column-name');
+                    var column = gantt.config.columns.find(function(col) {
+                        return col.name === name;
+                    });
+                    if (!column) return;
+
+                    var handle = document.createElement('span');
+                    handle.className = 'gantt-column-resize-handle';
+                    handle.addEventListener('pointerdown', function(e) {
+                        onPointerDown(e, column, header, handle);
+                    });
+                    handle.addEventListener('click', stopHeaderClick);
+                    handle.addEventListener('dblclick', stopHeaderClick);
+                    handle.addEventListener('lostpointercapture', onPointerCancel);
+                    header.appendChild(handle);
+                });
+            }
+
+            document.addEventListener('pointermove', onPointerMove);
+            document.addEventListener('pointerup', onPointerUp);
+            document.addEventListener('pointercancel', onPointerCancel);
+            window.addEventListener('blur', function() {
+                if (!activeResize) return;
+                cancelResize();
+                gantt.render();
+            });
+            gantt.attachEvent('onBeforeGanttRender', function() {
+                // An unrelated render invalidates the header being dragged.
+                cancelResize();
+                return true;
+            });
+            gantt.attachEvent('onGanttRender', buildResizeHandles);
+            buildResizeHandles();
+        })();
+
         // Custom grid/timeline splitter (GPL workaround — native resizer is Pro-only)
         (function initCustomSplitter() {
             var splitterEl = document.querySelector('.custom-grid-splitter');
@@ -2756,16 +2895,23 @@ gantt.form_blocks["template"] = {
             splitterEl.style.touchAction = 'none';
 
             function cleanup() {
+                if (!isDragging) return;
+                var pointerId = activePointerId;
                 isDragging = false;
                 activePointerId = -1;
+                isResizingGrid = false;
                 document.body.style.cursor = '';
                 document.body.style.userSelect = '';
                 if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+                if (splitterEl.hasPointerCapture(pointerId)) {
+                    splitterEl.releasePointerCapture(pointerId);
+                }
             }
 
             function onPointerDown(e) {
-                if (e.button !== 0) return;
+                if (e.button !== 0 || isResizingGrid) return;
                 isDragging = true;
+                isResizingGrid = true;
                 activePointerId = e.pointerId;
                 startX = e.clientX;
                 var gridPane = gantt.getLayoutView("gridPane");
@@ -2798,6 +2944,13 @@ gantt.form_blocks["template"] = {
 
             function onPointerUp(e) {
                 if (!isDragging || e.pointerId !== activePointerId) return;
+                if (rafId) {
+                    var gridPane = gantt.getLayoutView("gridPane");
+                    if (gridPane) {
+                        gridPane.$config.width = lastAppliedWidth;
+                        gantt.setSizes();
+                    }
+                }
                 cleanup();
             }
 

@@ -57,54 +57,10 @@
         }
 
         // Enhanced tooltip with Kanboard-specific information
-        gantt.templates.tooltip_text = function(start, end, task) {
-            var html = "<b>Task:</b> " + task.text + "<br/>";
-            html += "<b>Start:</b> " + gantt.templates.tooltip_date_format(start) + "<br/>";
-            html += "<b>End:</b> " + gantt.templates.tooltip_date_format(end) + "<br/>";
-            html += "<b>Progress:</b> " + Math.round(task.progress * 100) + "%<br/>";
-            
-            if (task.priority) {
-                html += "<b>Priority:</b> " + task.priority + "<br/>";
-            }
-            
-            if (task.assignee) {
-                html += "<b>Assignee:</b> " + task.assignee + "<br/>";
-            }
-            
-            if (task.column_title) {
-                html += "<b>Status:</b> " + task.column_title + "<br/>";
-            }
-            
-            if (task.link) {
-                html += "<br/><a href='" + task.link + "' target='_blank'>View in Kanboard</a>";
-            }
-            
-            return html;
-        };
+        // Tooltip is defined in dhtmlx-init.js with proper escaping
 
-        // Display assignee name on the right side of the task bar
-        gantt.templates.rightside_text = function(start, end, task) {
-            return task.assignee ? String(task.assignee) : "";
-        };
-
-        // Custom task class for better styling
-        gantt.templates.task_class = function(start, end, task) {
-            var classes = [];
-            
-            if (task.priority) {
-                classes.push("dhtmlx-priority-" + task.priority);
-            }
-            
-            if (task.readonly) {
-                classes.push("dhtmlx-readonly");
-            }
-            
-            if (task.type === "milestone") {
-                classes.push("dhtmlx-milestone");
-            }
-            
-            return classes.join(" ");
-        };
+        // rightside_text and task_class are defined in dhtmlx-init.js
+        // (bar label toggles, Kanboard color matching, and XSS escaping)
 
         // Custom progress text
         gantt.templates.progress_text = function(start, end, task) {
