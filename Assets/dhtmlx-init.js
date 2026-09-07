@@ -1656,6 +1656,7 @@ function initDhtmlxGantt() {
             className += "sprint-block ";
         } else if (useKanboardColors && task.color_id) {
             className += "gantt-kb-color-" + task.color_id + " ";
+            task.color = null;
         } else if (task.priority) {
             className += "dhtmlx-priority-" + task.priority + " ";
         }
