@@ -1133,6 +1133,29 @@ function initDhtmlxGantt() {
     gantt.config.show_grid = true;
     gantt.config.grid_resize = true;
 
+    // DHtmlX v9 requires explicit layout with resizer for grid/timeline split drag
+    gantt.config.layout = {
+        css: "gantt_container",
+        cols: [
+            {
+                width: 500,
+                min_width: 200,
+                rows: [
+                    {view: "grid", scrollX: "gridScroll", scrollable: true, scrollY: "scrollVer"},
+                    {view: "scrollbar", id: "gridScroll", group: "horizontal"}
+                ]
+            },
+            {resizer: true, width: 1},
+            {
+                rows: [
+                    {view: "timeline", scrollX: "scrollHor", scrollY: "scrollVer"},
+                    {view: "scrollbar", id: "scrollHor", group: "horizontal"}
+                ]
+            },
+            {view: "scrollbar", id: "scrollVer"}
+        ]
+    };
+
     // Enable plugins
     gantt.plugins({
         tooltip: true,
