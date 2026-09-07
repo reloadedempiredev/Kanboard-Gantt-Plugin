@@ -1456,8 +1456,8 @@ function initDhtmlxGantt() {
     }
 
     // Bar label toggle system — controls what text appears on Gantt bars
+    // Bar Labels: content shown INSIDE the task bar
     var allBarLabelOptions = [
-        {name: "assignee", label: "Assignee"},
         {name: "duration", label: "Duration"},
         {name: "start_date", label: "Start Date"},
         {name: "priority", label: "Priority"}
@@ -1482,6 +1482,33 @@ function initDhtmlxGantt() {
     }
 
     var activeBarLabels = loadBarLabelPreferences();
+
+    // Side Text: content shown floating BESIDE/after the task bar
+    var allSideTextOptions = [
+        {name: "assignee", label: "Assignee"},
+        {name: "task_name", label: "Task Name"},
+        {name: "status", label: "Status/Column"}
+    ];
+    var defaultSideText = [];
+
+    function loadSideTextPreferences() {
+        try {
+            var stored = localStorage.getItem("gantt_side_text");
+            if (stored) {
+                var parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) return parsed;
+            }
+        } catch (e) {}
+        return defaultSideText.slice();
+    }
+
+    function saveSideTextPreferences(labels) {
+        try {
+            localStorage.setItem("gantt_side_text", JSON.stringify(labels));
+        } catch (e) {}
+    }
+
+    var activeSideText = loadSideTextPreferences();
 
     function buildBarLabelSelector() {
         var container = document.getElementById("dhtmlx-gantt-chart");
@@ -1518,6 +1545,70 @@ function initDhtmlxGantt() {
                     activeBarLabels.splice(idx, 1);
                 }
                 saveBarLabelPreferences(activeBarLabels);
+                gantt.render();
+            });
+            var span = document.createElement("span");
+            span.textContent = opt.label;
+            label.appendChild(cb);
+            label.appendChild(span);
+            dropdown.appendChild(label);
+        });
+
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            var isOpen = dropdown.style.display !== "none";
+            dropdown.style.display = isOpen ? "none" : "block";
+        });
+
+        document.addEventListener("click", function(e) {
+            if (!wrapper.contains(e.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        wrapper.appendChild(btn);
+        wrapper.appendChild(dropdown);
+        var toolbar = document.querySelector('.dhtmlx-gantt-toolbar');
+        if (toolbar) {
+            toolbar.appendChild(wrapper);
+        }
+    }
+
+    function buildSideTextSelector() {
+        var container = document.getElementById("dhtmlx-gantt-chart");
+        if (!container) return;
+
+        var existing = document.getElementById("gantt-side-text-selector");
+        if (existing) existing.remove();
+
+        var wrapper = document.createElement("div");
+        wrapper.id = "gantt-side-text-selector";
+        wrapper.className = "gantt-column-selector";
+
+        var btn = document.createElement("button");
+        btn.className = "gantt-column-selector-btn";
+        btn.textContent = "Side Text";
+        btn.title = "Choose what text appears beside task bars";
+
+        var dropdown = document.createElement("div");
+        dropdown.className = "gantt-column-dropdown";
+        dropdown.style.display = "none";
+
+        allSideTextOptions.forEach(function(opt) {
+            var label = document.createElement("label");
+            label.className = "gantt-column-option";
+            var cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = opt.name;
+            cb.checked = activeSideText.indexOf(opt.name) !== -1;
+            cb.addEventListener("change", function() {
+                var idx = activeSideText.indexOf(opt.name);
+                if (this.checked && idx === -1) {
+                    activeSideText.push(opt.name);
+                } else if (!this.checked && idx !== -1) {
+                    activeSideText.splice(idx, 1);
+                }
+                saveSideTextPreferences(activeSideText);
                 gantt.render();
             });
             var span = document.createElement("span");
@@ -1605,10 +1696,17 @@ function initDhtmlxGantt() {
     };
 
     gantt.templates.rightside_text = function(start, end, task) {
-        if (activeBarLabels.indexOf("assignee") !== -1 && task.assignee) {
-            return escapeHtml(task.assignee);
+        var parts = [];
+        if (activeSideText.indexOf("assignee") !== -1 && task.assignee) {
+            parts.push(escapeHtml(task.assignee));
         }
-        return "";
+        if (activeSideText.indexOf("task_name") !== -1 && task.text) {
+            parts.push(escapeHtml(task.text));
+        }
+        if (activeSideText.indexOf("status") !== -1 && task.column_name) {
+            parts.push(escapeHtml(task.column_name));
+        }
+        return parts.join(" | ");
     };
     
     gantt.templates.tooltip_text = function(start, end, task) {
@@ -2760,6 +2858,7 @@ gantt.form_blocks["template"] = {
         gantt.init("dhtmlx-gantt-chart");
         buildColumnSelector();
         buildBarLabelSelector();
+        buildSideTextSelector();
 
         // Share ownership so column and pane drags cannot overlap.
         var isResizingGrid = false;
@@ -4687,9 +4786,21 @@ function fallbackRefresh() {
     // ✅ Dark Mode toggle button
     var darkModeToggleBtn = document.getElementById('dhtmlx-dark-mode-toggle');
     if (darkModeToggleBtn) {
-        // Restore saved dark mode preference
+        // Restore saved dark mode preference, or auto-detect from page background
         var savedDarkMode = localStorage.getItem('ganttDarkMode');
-        if (savedDarkMode === 'true') {
+        var shouldBeDark = false;
+        if (savedDarkMode !== null) {
+            shouldBeDark = savedDarkMode === 'true';
+        } else {
+            // Auto-detect: check if the page background is dark
+            var bgColor = window.getComputedStyle(document.body).backgroundColor;
+            var match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            if (match) {
+                var luminance = (parseInt(match[1]) * 299 + parseInt(match[2]) * 587 + parseInt(match[3]) * 114) / 1000;
+                shouldBeDark = luminance < 128;
+            }
+        }
+        if (shouldBeDark) {
             document.body.classList.add('gantt-dark-mode');
             darkModeToggleBtn.querySelector('i').className = 'fa fa-sun-o';
         }
