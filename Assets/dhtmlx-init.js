@@ -1335,6 +1335,7 @@ function initDhtmlxGantt() {
     function applyColumns(visibleNames) {
         var savedWidths = loadColumnWidths();
         var columns = [];
+        var totalWidth = 0;
         visibleNames.forEach(function(name) {
             for (var i = 0; i < allAvailableColumns.length; i++) {
                 if (allAvailableColumns[i].name === name) {
@@ -1342,13 +1343,21 @@ function initDhtmlxGantt() {
                     if (savedWidths[name]) {
                         col.width = savedWidths[name];
                     }
+                    totalWidth += col.width || 100;
                     columns.push(col);
                     break;
                 }
             }
         });
         columns.push({name: "add", label: "", width: 44});
+        totalWidth += 44;
         gantt.config.columns = columns;
+
+        var gridPane = gantt.getLayoutView ? gantt.getLayoutView("gridPane") : null;
+        if (gridPane) {
+            gridPane.$config.width = Math.max(200, totalWidth + 20);
+            gantt.setSizes();
+        }
     }
 
     var currentVisibleColumns = loadColumnPreferences();
@@ -1430,16 +1439,116 @@ function initDhtmlxGantt() {
             container.parentNode.insertBefore(wrapper, container);
         }
     }
-    
-    //new
+
+    // Bar label toggle system — controls what text appears on Gantt bars
+    var allBarLabelOptions = [
+        {name: "assignee", label: "Assignee"},
+        {name: "duration", label: "Duration"},
+        {name: "start_date", label: "Start Date"},
+        {name: "priority", label: "Priority"}
+    ];
+    var defaultBarLabels = [];
+
+    function loadBarLabelPreferences() {
+        try {
+            var stored = localStorage.getItem("gantt_bar_labels");
+            if (stored) {
+                var parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) return parsed;
+            }
+        } catch (e) {}
+        return defaultBarLabels.slice();
+    }
+
+    function saveBarLabelPreferences(labels) {
+        try {
+            localStorage.setItem("gantt_bar_labels", JSON.stringify(labels));
+        } catch (e) {}
+    }
+
+    var activeBarLabels = loadBarLabelPreferences();
+
+    function buildBarLabelSelector() {
+        var container = document.getElementById("dhtmlx-gantt-chart");
+        if (!container) return;
+
+        var existing = document.getElementById("gantt-bar-label-selector");
+        if (existing) existing.remove();
+
+        var wrapper = document.createElement("div");
+        wrapper.id = "gantt-bar-label-selector";
+        wrapper.className = "gantt-column-selector";
+
+        var btn = document.createElement("button");
+        btn.className = "gantt-column-selector-btn";
+        btn.textContent = "Bar Labels";
+        btn.title = "Choose what text appears on task bars";
+
+        var dropdown = document.createElement("div");
+        dropdown.className = "gantt-column-dropdown";
+        dropdown.style.display = "none";
+
+        allBarLabelOptions.forEach(function(opt) {
+            var label = document.createElement("label");
+            label.className = "gantt-column-option";
+            var cb = document.createElement("input");
+            cb.type = "checkbox";
+            cb.value = opt.name;
+            cb.checked = activeBarLabels.indexOf(opt.name) !== -1;
+            cb.addEventListener("change", function() {
+                var idx = activeBarLabels.indexOf(opt.name);
+                if (this.checked && idx === -1) {
+                    activeBarLabels.push(opt.name);
+                } else if (!this.checked && idx !== -1) {
+                    activeBarLabels.splice(idx, 1);
+                }
+                saveBarLabelPreferences(activeBarLabels);
+                gantt.render();
+            });
+            var span = document.createElement("span");
+            span.textContent = opt.label;
+            label.appendChild(cb);
+            label.appendChild(span);
+            dropdown.appendChild(label);
+        });
+
+        btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            var isOpen = dropdown.style.display !== "none";
+            dropdown.style.display = isOpen ? "none" : "block";
+        });
+
+        document.addEventListener("click", function(e) {
+            if (!wrapper.contains(e.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        wrapper.appendChild(btn);
+        wrapper.appendChild(dropdown);
+        var toolbar = document.querySelector('.dhtmlx-gantt-toolbar');
+        if (toolbar) {
+            toolbar.appendChild(wrapper);
+        }
+    }
+
+    // Use Kanboard task color setting
+    var useKanboardColors = true;
+    try {
+        var storedColorPref = localStorage.getItem("gantt_use_kanboard_colors");
+        if (storedColorPref !== null) useKanboardColors = storedColorPref !== "false";
+    } catch (e) {}
+
     gantt.templates.task_class = function(start, end, task) {
         var className = "";
-        
+
         // Milestone takes priority over other styling
         if (task.is_milestone) {
             className += "milestone-block ";
         } else if (task.task_type === 'sprint' || task.type === 'project') {
             className += "sprint-block ";
+        } else if (useKanboardColors && task.color_id) {
+            className += "gantt-kb-color-" + task.color_id + " ";
         } else if (task.priority) {
             className += "dhtmlx-priority-" + task.priority + " ";
         }
@@ -1467,14 +1576,22 @@ function initDhtmlxGantt() {
         if (task.is_milestone) {
             return "M";
         }
-        
-        return task.text;
+        var parts = [escapeHtml(task.text)];
+        if (activeBarLabels.indexOf("duration") !== -1 && task.duration) {
+            parts.push(task.duration + "d");
+        }
+        if (activeBarLabels.indexOf("priority") !== -1 && task.priority) {
+            parts.push(escapeHtml(task.priority));
+        }
+        if (activeBarLabels.indexOf("start_date") !== -1 && task.start_date) {
+            parts.push(gantt.date.date_to_str("%Y-%m-%d")(task.start_date));
+        }
+        return parts.join(" | ");
     };
-    
-    // Display assignee name on the right side of task bar
+
     gantt.templates.rightside_text = function(start, end, task) {
-        if (task.assignee) {
-            return task.assignee;
+        if (activeBarLabels.indexOf("assignee") !== -1 && task.assignee) {
+            return escapeHtml(task.assignee);
         }
         return "";
     };
@@ -2620,6 +2737,7 @@ gantt.form_blocks["template"] = {
     try {
         gantt.init("dhtmlx-gantt-chart");
         buildColumnSelector();
+        buildBarLabelSelector();
 
         // Custom grid/timeline splitter (GPL workaround — native resizer is Pro-only)
         (function initCustomSplitter() {

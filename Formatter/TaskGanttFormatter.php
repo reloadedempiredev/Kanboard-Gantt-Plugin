@@ -249,7 +249,8 @@ class TaskGanttFormatter extends BaseFormatter implements FormatterInterface
             // Sprint commonly comes from metadata:
             'sprint' => isset($metadata['sprint']) && $metadata['sprint'] !== '' ? $metadata['sprint'] : t('No Sprint'),
         
-            'column_title' => $task['column_name'],
+            'column_name' => $task['column_name'],
+            'color_id' => $task['color_id'] ?? '',
             'category_id' => $task['category_id'],
             'link' => $this->helper->url->href('TaskViewController', 'show', array(
                 'project_id' => $task['project_id'], 
