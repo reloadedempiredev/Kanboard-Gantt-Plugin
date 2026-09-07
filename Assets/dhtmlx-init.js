@@ -1156,6 +1156,45 @@ function initDhtmlxGantt() {
         ]
     };
 
+    // Enable click-to-sort on column headers
+    gantt.config.sort = true;
+
+    // Track sort state for direction toggle and header arrow indicators
+    var currentSortField = null;
+    var currentSortDesc = false;
+
+    gantt.attachEvent("onGridHeaderClick", function(name, e) {
+        if (name === "add") return true;
+        if (name === currentSortField) {
+            currentSortDesc = !currentSortDesc;
+        } else {
+            currentSortField = name;
+            currentSortDesc = false;
+        }
+        gantt.sort(currentSortField, currentSortDesc);
+
+        // Update header arrow indicators
+        var headers = document.querySelectorAll(".gantt_grid_head_cell");
+        for (var i = 0; i < headers.length; i++) {
+            var arrow = headers[i].querySelector(".gantt-sort-arrow");
+            if (arrow) arrow.remove();
+        }
+        var allCols = gantt.config.columns;
+        for (var j = 0; j < allCols.length; j++) {
+            if (allCols[j].name === currentSortField) {
+                var cells = document.querySelectorAll(".gantt_grid_head_cell");
+                if (cells[j]) {
+                    var span = document.createElement("span");
+                    span.className = "gantt-sort-arrow";
+                    span.textContent = currentSortDesc ? " ▼" : " ▲";
+                    cells[j].appendChild(span);
+                }
+                break;
+            }
+        }
+        return false;
+    });
+
     // Enable plugins
     gantt.plugins({
         tooltip: true,

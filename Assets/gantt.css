@@ -1454,3 +1454,23 @@ body.gantt-dark-mode .gantt-legend-chip {
 .gantt_container {
     height: 100%;
 }
+
+/* Sortable column headers */
+.gantt_grid_head_cell {
+    cursor: pointer;
+    user-select: none;
+}
+
+.gantt-sort-arrow {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-left: 2px;
+}
+
+body.gantt-dark-mode .gantt-sort-arrow {
+    color: #ccc;
+}
+
+.gantt_grid_head_cell:hover {
+    opacity: 0.8;
+}
