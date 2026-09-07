@@ -1160,6 +1160,17 @@ function initDhtmlxGantt() {
 
     
     
+    // Escape user-controlled strings before DHTMLX innerHTML templates
+    function escapeHtml(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    // Consistent date format for grid columns
+    gantt.config.date_grid = "%Y-%m-%d";
+
     // Configurable column system with localStorage persistence
     var allAvailableColumns = [
         {name: "text", label: "Task Name", tree: true, width: 200, resize: true, alwaysVisible: true},
@@ -1177,12 +1188,12 @@ function initDhtmlxGantt() {
         {name: "priority", label: "Priority", align: "center", width: 80, resize: true},
         {name: "assignee", label: "Assignee", align: "center", width: 120, resize: true,
             template: function(task) {
-                return task.assignee || "Unassigned";
+                return escapeHtml(task.assignee) || "Unassigned";
             }
         },
         {name: "column_name", label: "Status", align: "center", width: 100, resize: true,
             template: function(task) {
-                return task.column_name || "";
+                return escapeHtml(task.column_name) || "";
             }
         }
     ];
@@ -1263,7 +1274,7 @@ function initDhtmlxGantt() {
     var currentVisibleColumns = loadColumnPreferences();
     applyColumns(currentVisibleColumns);
 
-    gantt.attachEvent("onGridResizeEnd", function() {
+    gantt.attachEvent("onColumnResizeEnd", function() {
         saveColumnWidths();
         return true;
     });
@@ -1332,7 +1343,12 @@ function initDhtmlxGantt() {
 
         wrapper.appendChild(btn);
         wrapper.appendChild(dropdown);
-        container.parentNode.insertBefore(wrapper, container);
+        var toolbar = document.querySelector('.dhtmlx-gantt-toolbar');
+        if (toolbar) {
+            toolbar.appendChild(wrapper);
+        } else {
+            container.parentNode.insertBefore(wrapper, container);
+        }
     }
     
     //new

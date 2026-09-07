@@ -1326,7 +1326,7 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     border-width: 3px !important;
 }
 
-/* Column selector */
+/* Column selector - light mode defaults */
 .gantt-column-selector {
     display: inline-block;
     position: relative;
@@ -1338,14 +1338,14 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     padding: 4px 10px;
     font-size: 13px;
     cursor: pointer;
-    background: #3a3a3a;
-    color: #ddd;
-    border: 1px solid #555;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
     border-radius: 3px;
 }
 
 .gantt-column-selector-btn:hover {
-    background: #4a4a4a;
+    background: #e0e0e0;
 }
 
 .gantt-column-dropdown {
@@ -1353,12 +1353,12 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     top: 100%;
     left: 0;
     z-index: 9999;
-    background: #2a2a2a;
-    border: 1px solid #555;
+    background: #fff;
+    border: 1px solid #ccc;
     border-radius: 4px;
     padding: 6px 0;
     min-width: 180px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .gantt-column-option {
@@ -1368,12 +1368,12 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     padding: 4px 12px;
     cursor: pointer;
     font-size: 13px;
-    color: #ccc;
+    color: #333;
     white-space: nowrap;
 }
 
 .gantt-column-option:hover {
-    background: #3a3a3a;
+    background: #f5f5f5;
 }
 
 .gantt-column-option input[type="checkbox"] {
@@ -1386,7 +1386,7 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     cursor: default;
 }
 
-/* Legend inline chips in toolbar */
+/* Legend inline chips in toolbar - light mode defaults */
 .gantt-legend-chips {
     display: inline-flex;
     align-items: center;
@@ -1400,11 +1400,11 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     align-items: center;
     gap: 4px;
     font-size: 11px;
-    color: #ccc;
+    color: #555;
     padding: 2px 8px;
     border-radius: 3px;
-    background: #333;
-    border: 1px solid #555;
+    background: #eee;
+    border: 1px solid #ccc;
 }
 
 .gantt-legend-chip-color {
@@ -1414,12 +1414,43 @@ body.gantt-dark-mode div.gantt_task_line.workload-overloaded {
     border-radius: 2px;
 }
 
-/* Full-height gantt chart */
+/* Dark mode overrides for column selector and legend chips */
+body.gantt-dark-mode .gantt-column-selector-btn {
+    background: #3a3a3a;
+    color: #ddd;
+    border-color: #555;
+}
+
+body.gantt-dark-mode .gantt-column-selector-btn:hover {
+    background: #4a4a4a;
+}
+
+body.gantt-dark-mode .gantt-column-dropdown {
+    background: #2a2a2a;
+    border-color: #555;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body.gantt-dark-mode .gantt-column-option {
+    color: #ccc;
+}
+
+body.gantt-dark-mode .gantt-column-option:hover {
+    background: #3a3a3a;
+}
+
+body.gantt-dark-mode .gantt-legend-chip {
+    background: #333;
+    color: #ccc;
+    border-color: #555;
+}
+
+/* Full-height gantt chart using flex, not viewport calc */
 #dhtmlx-gantt-chart {
-    height: calc(100vh - 140px) !important;
+    flex: 1;
     min-height: 400px;
 }
 
 .gantt_container {
-    height: 100% !important;
+    height: 100%;
 }
